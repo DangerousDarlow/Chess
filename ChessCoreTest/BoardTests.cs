@@ -73,5 +73,9 @@ public class Tests
         {
             Assert.That(BoardExtensions.IndexFromRankAndFile(rank, file), Is.EqualTo(index));
             Assert.That(BoardExtensions.IndexFromRankAndFile(rank, file).PositionAsAlgebraicNotation(), Is.EqualTo(position));
+            
+            var (rankFromIndex, fileFromIndex) = BoardExtensions.RankAndFileFromIndex(index);
+            Assert.That(rankFromIndex, Is.EqualTo(rank));
+            Assert.That(fileFromIndex, Is.EqualTo(file));
         });
 }

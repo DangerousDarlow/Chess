@@ -61,6 +61,8 @@ public class Board
         set => _board[position.PositionAsByte()] = value.ByteFromPiece();
     }
 
+    private Piece? this[byte position] => _board[position].PieceFromByte();
+
     public static Board CreateWithNewGameSetup() => new();
 
     public static Board CreateFromForsythEdwardsNotation(string fen) => new(fen);
@@ -148,6 +150,47 @@ public class Board
     }
 
     public override string ToString() => ToForsythEdwardsNotation();
+
+    public List<Move> GetValidMovesForColour(Colour colour)
+    {
+        var moves = new List<Move>();
+
+        for (byte index = 0; index < _board.Length; ++index)
+        {
+            var piece = _board[index].PieceFromByte();
+            if (piece == null || piece.Colour != colour)
+                continue;
+
+            var (rank, file) = BoardExtensions.RankAndFileFromIndex(index);
+            var pieceMoves = piece.Type switch
+            {
+                PieceType.Pawn => GetValidPawnMoves(colour, index)
+            };
+            
+            moves.AddRange(pieceMoves);
+        }
+
+        return moves;
+    }
+    
+    private IEnumerable<Move> GetValidPawnMoves(Colour colour, byte position)
+    {
+        var (rank, file) = BoardExtensions.RankAndFileFromIndex(position);
+
+        var rankAdvance = (byte) (colour == Colour.White ? rank + 1 : rank - 1);
+        if (IsRankOrFileInBounds(rankAdvance) is false)
+            return Enumerable.Empty<Move>();
+
+        var moves = new List<Move>();
+
+        var indexAdvance = BoardExtensions.IndexFromRankAndFile(rankAdvance, file);
+        if (this[indexAdvance] is null)
+            moves.Add(new Move(position, indexAdvance));
+
+        return moves;
+    }
+
+    private static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
 }
 
 public static class BoardExtensions
@@ -173,4 +216,6 @@ public static class BoardExtensions
     public static byte ByteFromPiece(this Piece? piece) => piece?.ByteValue ?? 0;
 
     public static byte IndexFromRankAndFile(byte rank, byte file) => (byte) ((rank - 1) * Board.Size + (file - 1));
+
+    public static (byte rank, byte file) RankAndFileFromIndex(byte index) => ((byte) (index / Board.Size + 1), (byte) (index % Board.Size + 1));
 }
