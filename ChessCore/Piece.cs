@@ -1,24 +1,8 @@
 ﻿namespace ChessCore;
 
-public static class Pieces
-{
-    public static Piece BlackPawn => new(Colour.Black, PieceType.Pawn);
-    public static Piece BlackBishop => new(Colour.Black, PieceType.Bishop);
-    public static Piece BlackKnight => new(Colour.Black, PieceType.Knight);
-    public static Piece BlackRook => new(Colour.Black, PieceType.Rook);
-    public static Piece BlackQueen => new(Colour.Black, PieceType.Queen);
-    public static Piece BlackKing => new(Colour.Black, PieceType.King);
-    public static Piece WhitePawn => new(Colour.White, PieceType.Pawn);
-    public static Piece WhiteBishop => new(Colour.White, PieceType.Bishop);
-    public static Piece WhiteKnight => new(Colour.White, PieceType.Knight);
-    public static Piece WhiteRook => new(Colour.White, PieceType.Rook);
-    public static Piece WhiteQueen => new(Colour.White, PieceType.Queen);
-    public static Piece WhiteKing => new(Colour.White, PieceType.King);
-}
-
 public record Piece
 {
-    public Piece(Colour colour, PieceType type)
+    private Piece(Colour colour, PieceType type)
     {
         ByteValue = (colour, type) switch
         {
@@ -37,6 +21,19 @@ public record Piece
             _ => throw new ArgumentException($"Invalid piece colour {colour} and type {type}")
         };
     }
+
+    public static Piece BlackPawn => new(Colour.Black, PieceType.Pawn);
+    public static Piece BlackBishop => new(Colour.Black, PieceType.Bishop);
+    public static Piece BlackKnight => new(Colour.Black, PieceType.Knight);
+    public static Piece BlackRook => new(Colour.Black, PieceType.Rook);
+    public static Piece BlackQueen => new(Colour.Black, PieceType.Queen);
+    public static Piece BlackKing => new(Colour.Black, PieceType.King);
+    public static Piece WhitePawn => new(Colour.White, PieceType.Pawn);
+    public static Piece WhiteBishop => new(Colour.White, PieceType.Bishop);
+    public static Piece WhiteKnight => new(Colour.White, PieceType.Knight);
+    public static Piece WhiteRook => new(Colour.White, PieceType.Rook);
+    public static Piece WhiteQueen => new(Colour.White, PieceType.Queen);
+    public static Piece WhiteKing => new(Colour.White, PieceType.King);
 
     public byte ByteValue { get; }
 
@@ -66,23 +63,37 @@ public record Piece
         _ => PieceType.Pawn
     };
 
-    public char ForsythEdwardsNotation
+    public static char ToForsythEdwardsNotation(Piece piece)
     {
-        get
+        var character = piece.Type switch
         {
-            var character = Type switch
-            {
-                PieceType.Bishop => 'b',
-                PieceType.Knight => 'n',
-                PieceType.Rook => 'r',
-                PieceType.Queen => 'q',
-                PieceType.King => 'k',
-                _ => 'p'
-            };
+            PieceType.Bishop => 'b',
+            PieceType.Knight => 'n',
+            PieceType.Rook => 'r',
+            PieceType.Queen => 'q',
+            PieceType.King => 'k',
+            _ => 'p'
+        };
 
-            return Colour == Colour.White ? char.ToUpper(character) : char.ToLower(character);
-        }
+        return piece.Colour == Colour.White ? char.ToUpper(character) : char.ToLower(character);
     }
+
+    public static Piece FromForsythEdwardsNotation(char piece) => piece switch
+    {
+        'p' => BlackPawn,
+        'b' => BlackBishop,
+        'n' => BlackKnight,
+        'r' => BlackRook,
+        'q' => BlackQueen,
+        'k' => BlackKing,
+        'P' => WhitePawn,
+        'B' => WhiteBishop,
+        'N' => WhiteKnight,
+        'R' => WhiteRook,
+        'Q' => WhiteQueen,
+        'K' => WhiteKing,
+        _ => throw new ArgumentException($"Invalid piece notation '{piece}'")
+    };
 
     public override string ToString() => $"{Colour} {Type}";
 }

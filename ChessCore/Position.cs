@@ -1,14 +1,5 @@
 ﻿namespace ChessCore;
 
-public record Position
-{
-    public Position(string algebraic) => ByteValue = algebraic.PositionAsByte();
-
-    private byte ByteValue { get; }
-
-    public override string ToString() => ByteValue.PositionAsAlgebraicNotation();
-}
-
 public static class PositionExtensions
 {
     public static byte PositionAsByte(this string position) => position switch
