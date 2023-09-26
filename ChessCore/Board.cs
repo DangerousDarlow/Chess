@@ -183,7 +183,7 @@ public class Board
 
         var indexAdvance = BoardExtensions.IndexFromRankAndFile(rankAdvance, file);
         if (this[indexAdvance] is null)
-            moves.Add(new Move(position, indexAdvance));
+            moves.Add(new Move(MoveType.Move, position, indexAdvance));
 
         return moves;
     }

@@ -10,6 +10,7 @@ public class GetValidMovesTests
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/P7/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves.Count, Is.EqualTo(1));
+        Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
         Assert.That(moves[0].From, Is.EqualTo("a2"));
         Assert.That(moves[0].To, Is.EqualTo("a3"));
     }
@@ -20,6 +21,7 @@ public class GetValidMovesTests
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/P7/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves.Count, Is.EqualTo(1));
+        Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
         Assert.That(moves[0].From, Is.EqualTo("a3"));
         Assert.That(moves[0].To, Is.EqualTo("a4"));
     }
