@@ -5,29 +5,29 @@ namespace ChessCoreTest;
 public class GetValidMovesTests
 {
     [Test]
-    public void White_pawn_on_a2_can_move_to_a3_only()
+    public void Pawn_can_advance_one_square()
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/P7/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
-        Assert.That(moves.Count, Is.EqualTo(1));
+        Assert.That(moves, Has.Count.EqualTo(1));
         Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
         Assert.That(moves[0].From, Is.EqualTo("a2"));
         Assert.That(moves[0].To, Is.EqualTo("a3"));
     }
 
     [Test]
-    public void White_pawn_on_a2_with_white_pawn_on_a3_cannot_move()
+    public void Pawn_blocked_by_own_piece_cannot_advance()
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/P7/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
-        Assert.That(moves.Count, Is.EqualTo(1));
+        Assert.That(moves, Has.Count.EqualTo(1));
         Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
         Assert.That(moves[0].From, Is.EqualTo("a3"));
         Assert.That(moves[0].To, Is.EqualTo("a4"));
     }
 
     [Test]
-    public void White_pawn_on_a2_with_black_pawn_on_a3_cannot_move()
+    public void Pawn_blocked_by_opponent_piece_cannot_advance()
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/p7/P7/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
@@ -35,7 +35,7 @@ public class GetValidMovesTests
     }
 
     [Test]
-    public void White_pawn_on_a8_cannot_move()
+    public void White_pawn_cannot_advance_off_board()
     {
         var board = Board.CreateFromForsythEdwardsNotation("P7/8/8/8/8/8/8/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
@@ -43,10 +43,33 @@ public class GetValidMovesTests
     }
 
     [Test]
-    public void Black_pawn_on_a1_cannot_move()
+    public void Black_pawn_cannot_advance_off_board()
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/p7 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.Black);
         Assert.That(moves, Is.Empty);
+    }
+
+    [Test]
+    public void Pawn_can_capture_diagonally_left_or_right()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/ppp5/1P6 w - - 0 1");
+        var moves = board.GetValidMovesForColour(Colour.White);
+
+        Assert.That(moves, Has.Count.EqualTo(2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(moves[0].Type, Is.EqualTo(MoveType.Capture));
+            Assert.That(moves[0].From, Is.EqualTo("b1"));
+            Assert.That(moves[0].To, Is.EqualTo("a2"));
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(moves[1].Type, Is.EqualTo(MoveType.Capture));
+            Assert.That(moves[1].From, Is.EqualTo("b1"));
+            Assert.That(moves[1].To, Is.EqualTo("c2"));
+        });
     }
 }

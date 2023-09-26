@@ -6,7 +6,9 @@ public class Board
 {
     public const int Size = 8;
 
-    private readonly PieceTypeInternal[] _board = new PieceTypeInternal[Size * Size];
+    public const int IndexSize = Size * Size;
+
+    private readonly PieceTypeInternal[] _board = new PieceTypeInternal[IndexSize];
 
     private Board(string fen)
     {
@@ -175,20 +177,42 @@ public class Board
     {
         var (rank, file) = BoardExtensions.RankAndFileFromIndex(position);
 
-        var rankAdvance = (byte) (colour == Colour.White ? rank + 1 : rank - 1);
-        if (IsRankOrFileInBounds(rankAdvance) is false)
+        // Advance and capture both move forward
+        var rankNext = (byte) (colour == Colour.White ? rank + 1 : rank - 1);
+        if (IsRankOrFileInBounds(rankNext) is false)
             return Enumerable.Empty<Move>();
 
         var moves = new List<Move>();
 
-        var indexAdvance = BoardExtensions.IndexFromRankAndFile(rankAdvance, file);
+        // Advance
+        var indexAdvance = BoardExtensions.IndexFromRankAndFile(rankNext, file);
         if (this[indexAdvance] is null)
             moves.Add(new Move(MoveType.Move, position, indexAdvance));
+
+        // Capture left
+        var fileCaptureLeft = (byte) (file - 1);
+        if (IsRankOrFileInBounds(fileCaptureLeft))
+        {
+            var indexCaptureLeft = BoardExtensions.IndexFromRankAndFile(rankNext, fileCaptureLeft);
+            var pieceCaptureLeft = this[indexCaptureLeft];
+            if (pieceCaptureLeft is not null && pieceCaptureLeft.Colour != colour)
+                moves.Add(new Move(MoveType.Capture, position, indexCaptureLeft));
+        }
+
+        // Capture right
+        var fileCaptureRight = (byte) (file + 1);
+        if (IsRankOrFileInBounds(fileCaptureRight))
+        {
+            var indexCaptureRight = BoardExtensions.IndexFromRankAndFile(rankNext, fileCaptureRight);
+            var pieceCaptureRight = this[indexCaptureRight];
+            if (pieceCaptureRight is not null && pieceCaptureRight.Colour != colour)
+                moves.Add(new Move(MoveType.Capture, position, indexCaptureRight));
+        }
 
         return moves;
     }
 
-    private static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
+    public static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
 }
 
 public static class BoardExtensions
@@ -213,7 +237,22 @@ public static class BoardExtensions
 
     public static PieceTypeInternal ToPieceTypeInternal(this Piece? piece) => piece?.ByteValue ?? PieceTypeInternal.None;
 
-    public static byte IndexFromRankAndFile(byte rank, byte file) => (byte) ((rank - 1) * Board.Size + (file - 1));
+    public static byte IndexFromRankAndFile(byte rank, byte file)
+    {
+        if (Board.IsRankOrFileInBounds(rank) == false)
+            throw new ArgumentOutOfRangeException(nameof(rank));
 
-    public static (byte rank, byte file) RankAndFileFromIndex(byte index) => ((byte) (index / Board.Size + 1), (byte) (index % Board.Size + 1));
+        if (Board.IsRankOrFileInBounds(file) == false)
+            throw new ArgumentOutOfRangeException(nameof(file));
+
+        return (byte) ((rank - 1) * Board.Size + (file - 1));
+    }
+
+    public static (byte rank, byte file) RankAndFileFromIndex(byte index)
+    {
+        if (index >= Board.IndexSize)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        return ((byte) (index / Board.Size + 1), (byte) (index % Board.Size + 1));
+    }
 }
