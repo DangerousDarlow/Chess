@@ -49,11 +49,11 @@ public class Board
         this["h8"] = Piece.BlackRook;
     }
 
-    public Colour ActiveColour { get; private set; } = Colour.White;
+    public bool WhiteTurn { get; private set; } = true;
 
-    public int FullMoveNumber { get; private set; } = 1;
+    public ushort FullMoveNumber { get; private set; } = 1;
 
-    public int HalfMoveClock { get; private set; }
+    public ushort HalfMoveClock { get; private set; }
 
     public Piece? this[string position]
     {
@@ -100,15 +100,14 @@ public class Board
                 stringBuilder.Append('/');
         }
 
-        var colourChar = ActiveColour.ToString().ToLower().First();
+        var activeColour = WhiteTurn ? Colour.White : Colour.Black;
+        var colourChar = activeColour.ToString().ToLower().First();
         stringBuilder.Append($" {colourChar} KQkq - {HalfMoveClock} {FullMoveNumber}");
         return stringBuilder.ToString();
     }
 
-    public void FromForsythEdwardsNotation(string fen)
+    private void FromForsythEdwardsNotation(string fen)
     {
-        Array.Clear(_board);
-
         var parts = fen.Split(' ');
 
         var board = parts[0];
@@ -135,18 +134,18 @@ public class Board
         }
 
         var colour = parts[1];
-        ActiveColour = colour switch
+        WhiteTurn = colour switch
         {
-            "w" => Colour.White,
-            "b" => Colour.Black,
+            "w" => true,
+            "b" => false,
             _ => throw new ArgumentException($"Invalid colour {colour}")
         };
 
         var halfMoveClock = parts[4];
-        HalfMoveClock = int.Parse(halfMoveClock);
+        HalfMoveClock = ushort.Parse(halfMoveClock);
 
         var fullMoveNumber = parts[5];
-        FullMoveNumber = int.Parse(fullMoveNumber);
+        FullMoveNumber = ushort.Parse(fullMoveNumber);
     }
 
     public override string ToString() => ToForsythEdwardsNotation();
@@ -166,13 +165,13 @@ public class Board
             {
                 PieceType.Pawn => GetValidPawnMoves(colour, index)
             };
-            
+
             moves.AddRange(pieceMoves);
         }
 
         return moves;
     }
-    
+
     private IEnumerable<Move> GetValidPawnMoves(Colour colour, byte position)
     {
         var (rank, file) = BoardExtensions.RankAndFileFromIndex(position);

@@ -48,7 +48,7 @@ public class Tests
         Assert.That(board["g8"], Is.EqualTo(Piece.BlackKnight));
         Assert.That(board["h8"], Is.EqualTo(Piece.BlackRook));
 
-        Assert.That(board.ActiveColour, Is.EqualTo(Colour.White));
+        Assert.That(board.WhiteTurn, Is.True);
         Assert.That(board.FullMoveNumber, Is.EqualTo(1));
         Assert.That(board.HalfMoveClock, Is.EqualTo(0));
     }
@@ -73,7 +73,7 @@ public class Tests
         {
             Assert.That(BoardExtensions.IndexFromRankAndFile(rank, file), Is.EqualTo(index));
             Assert.That(BoardExtensions.IndexFromRankAndFile(rank, file).PositionAsAlgebraicNotation(), Is.EqualTo(position));
-            
+
             var (rankFromIndex, fileFromIndex) = BoardExtensions.RankAndFileFromIndex(index);
             Assert.That(rankFromIndex, Is.EqualTo(rank));
             Assert.That(fileFromIndex, Is.EqualTo(file));

@@ -13,7 +13,7 @@ public class GetValidMovesTests
         Assert.That(moves[0].From, Is.EqualTo("a2"));
         Assert.That(moves[0].To, Is.EqualTo("a3"));
     }
-    
+
     [Test]
     public void White_pawn_on_a2_with_white_pawn_on_a3_cannot_move()
     {
@@ -23,7 +23,7 @@ public class GetValidMovesTests
         Assert.That(moves[0].From, Is.EqualTo("a3"));
         Assert.That(moves[0].To, Is.EqualTo("a4"));
     }
-    
+
     [Test]
     public void White_pawn_on_a2_with_black_pawn_on_a3_cannot_move()
     {
@@ -31,7 +31,7 @@ public class GetValidMovesTests
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves, Is.Empty);
     }
-    
+
     [Test]
     public void White_pawn_on_a8_cannot_move()
     {
@@ -39,7 +39,7 @@ public class GetValidMovesTests
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves, Is.Empty);
     }
-    
+
     [Test]
     public void Black_pawn_on_a1_cannot_move()
     {
