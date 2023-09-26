@@ -160,7 +160,6 @@ public class Board
             if (piece == null || piece.Colour != colour)
                 continue;
 
-            var (rank, file) = BoardExtensions.RankAndFileFromIndex(index);
             var pieceMoves = piece.Type switch
             {
                 PieceType.Pawn => GetValidPawnMoves(colour, index)

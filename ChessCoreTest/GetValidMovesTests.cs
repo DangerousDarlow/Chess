@@ -44,7 +44,7 @@ public class GetValidMovesTests
     public void Black_pawn_on_a1_cannot_move()
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/p7 w - - 0 1");
-        var moves = board.GetValidMovesForColour(Colour.White);
+        var moves = board.GetValidMovesForColour(Colour.Black);
         Assert.That(moves, Is.Empty);
     }
 }
