@@ -6,7 +6,7 @@ public class Board
 {
     public const int Size = 8;
 
-    private readonly byte[] _board = new byte[Size * Size];
+    private readonly PieceTypeInternal[] _board = new PieceTypeInternal[Size * Size];
 
     private Board(string fen)
     {
@@ -57,11 +57,11 @@ public class Board
 
     public Piece? this[string position]
     {
-        get => _board[position.PositionAsByte()].PieceFromByte();
-        set => _board[position.PositionAsByte()] = value.ByteFromPiece();
+        get => _board[position.PositionAsByte()].ToPiece();
+        set => _board[position.PositionAsByte()] = value.ToPieceTypeInternal();
     }
 
-    private Piece? this[byte position] => _board[position].PieceFromByte();
+    private Piece? this[byte position] => _board[position].ToPiece();
 
     public static Board CreateWithNewGameSetup() => new();
 
@@ -77,7 +77,7 @@ public class Board
 
             for (byte file = 1; file <= Size; ++file)
             {
-                var piece = _board[BoardExtensions.IndexFromRankAndFile(rank, file)].PieceFromByte();
+                var piece = _board[BoardExtensions.IndexFromRankAndFile(rank, file)].ToPiece();
                 if (piece == null)
                 {
                     ++emptyCount;
@@ -156,7 +156,7 @@ public class Board
 
         for (byte index = 0; index < _board.Length; ++index)
         {
-            var piece = _board[index].PieceFromByte();
+            var piece = _board[index].ToPiece();
             if (piece == null || piece.Colour != colour)
                 continue;
 
@@ -193,25 +193,25 @@ public class Board
 
 public static class BoardExtensions
 {
-    public static Piece? PieceFromByte(this byte piece) => piece switch
+    public static Piece? ToPiece(this PieceTypeInternal piece) => piece switch
     {
-        0 => null,
-        1 => Piece.BlackPawn,
-        2 => Piece.BlackBishop,
-        3 => Piece.BlackKnight,
-        4 => Piece.BlackRook,
-        5 => Piece.BlackQueen,
-        6 => Piece.BlackKing,
-        7 => Piece.WhitePawn,
-        8 => Piece.WhiteBishop,
-        9 => Piece.WhiteKnight,
-        10 => Piece.WhiteRook,
-        11 => Piece.WhiteQueen,
-        12 => Piece.WhiteKing,
+        PieceTypeInternal.None => null,
+        PieceTypeInternal.BlackPawn => Piece.BlackPawn,
+        PieceTypeInternal.BlackBishop => Piece.BlackBishop,
+        PieceTypeInternal.BlackKnight => Piece.BlackKnight,
+        PieceTypeInternal.BlackRook => Piece.BlackRook,
+        PieceTypeInternal.BlackQueen => Piece.BlackQueen,
+        PieceTypeInternal.BlackKing => Piece.BlackKing,
+        PieceTypeInternal.WhitePawn => Piece.WhitePawn,
+        PieceTypeInternal.WhiteBishop => Piece.WhiteBishop,
+        PieceTypeInternal.WhiteKnight => Piece.WhiteKnight,
+        PieceTypeInternal.WhiteRook => Piece.WhiteRook,
+        PieceTypeInternal.WhiteQueen => Piece.WhiteQueen,
+        PieceTypeInternal.WhiteKing => Piece.WhiteKing,
         _ => throw new ArgumentException($"Invalid piece byte {piece}")
     };
 
-    public static byte ByteFromPiece(this Piece? piece) => piece?.ByteValue ?? 0;
+    public static PieceTypeInternal ToPieceTypeInternal(this Piece? piece) => piece?.ByteValue ?? PieceTypeInternal.None;
 
     public static byte IndexFromRankAndFile(byte rank, byte file) => (byte) ((rank - 1) * Board.Size + (file - 1));
 

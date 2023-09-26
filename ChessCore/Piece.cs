@@ -6,18 +6,18 @@ public record Piece
     {
         ByteValue = (colour, type) switch
         {
-            (Colour.Black, PieceType.Pawn) => 1,
-            (Colour.Black, PieceType.Bishop) => 2,
-            (Colour.Black, PieceType.Knight) => 3,
-            (Colour.Black, PieceType.Rook) => 4,
-            (Colour.Black, PieceType.Queen) => 5,
-            (Colour.Black, PieceType.King) => 6,
-            (Colour.White, PieceType.Pawn) => 7,
-            (Colour.White, PieceType.Bishop) => 8,
-            (Colour.White, PieceType.Knight) => 9,
-            (Colour.White, PieceType.Rook) => 10,
-            (Colour.White, PieceType.Queen) => 11,
-            (Colour.White, PieceType.King) => 12,
+            (Colour.Black, PieceType.Pawn) => PieceTypeInternal.BlackPawn,
+            (Colour.Black, PieceType.Bishop) => PieceTypeInternal.BlackBishop,
+            (Colour.Black, PieceType.Knight) => PieceTypeInternal.BlackKnight,
+            (Colour.Black, PieceType.Rook) => PieceTypeInternal.BlackRook,
+            (Colour.Black, PieceType.Queen) => PieceTypeInternal.BlackQueen,
+            (Colour.Black, PieceType.King) => PieceTypeInternal.BlackKing,
+            (Colour.White, PieceType.Pawn) => PieceTypeInternal.WhitePawn,
+            (Colour.White, PieceType.Bishop) => PieceTypeInternal.WhiteBishop,
+            (Colour.White, PieceType.Knight) => PieceTypeInternal.WhiteKnight,
+            (Colour.White, PieceType.Rook) => PieceTypeInternal.WhiteRook,
+            (Colour.White, PieceType.Queen) => PieceTypeInternal.WhiteQueen,
+            (Colour.White, PieceType.King) => PieceTypeInternal.WhiteKing,
             _ => throw new ArgumentException($"Invalid piece colour {colour} and type {type}")
         };
     }
@@ -35,31 +35,31 @@ public record Piece
     public static Piece WhiteQueen => new(Colour.White, PieceType.Queen);
     public static Piece WhiteKing => new(Colour.White, PieceType.King);
 
-    public byte ByteValue { get; }
+    public PieceTypeInternal ByteValue { get; }
 
     public Colour Colour => ByteValue switch
     {
-        1 => Colour.Black,
-        2 => Colour.Black,
-        3 => Colour.Black,
-        4 => Colour.Black,
-        5 => Colour.Black,
-        6 => Colour.Black,
+        PieceTypeInternal.BlackPawn => Colour.Black,
+        PieceTypeInternal.BlackBishop => Colour.Black,
+        PieceTypeInternal.BlackKnight => Colour.Black,
+        PieceTypeInternal.BlackRook => Colour.Black,
+        PieceTypeInternal.BlackQueen => Colour.Black,
+        PieceTypeInternal.BlackKing => Colour.Black,
         _ => Colour.White
     };
 
     public PieceType Type => ByteValue switch
     {
-        2 => PieceType.Bishop,
-        3 => PieceType.Knight,
-        4 => PieceType.Rook,
-        5 => PieceType.Queen,
-        6 => PieceType.King,
-        8 => PieceType.Bishop,
-        9 => PieceType.Knight,
-        10 => PieceType.Rook,
-        11 => PieceType.Queen,
-        12 => PieceType.King,
+        PieceTypeInternal.BlackBishop => PieceType.Bishop,
+        PieceTypeInternal.WhiteBishop => PieceType.Bishop,
+        PieceTypeInternal.BlackKnight => PieceType.Knight,
+        PieceTypeInternal.WhiteKnight => PieceType.Knight,
+        PieceTypeInternal.BlackRook => PieceType.Rook,
+        PieceTypeInternal.WhiteRook => PieceType.Rook,
+        PieceTypeInternal.BlackQueen => PieceType.Queen,
+        PieceTypeInternal.WhiteQueen => PieceType.Queen,
+        PieceTypeInternal.BlackKing => PieceType.King,
+        PieceTypeInternal.WhiteKing => PieceType.King,
         _ => PieceType.Pawn
     };
 
@@ -75,7 +75,7 @@ public record Piece
             _ => 'p'
         };
 
-        return piece.Colour == Colour.White ? char.ToUpper(character) : char.ToLower(character);
+        return piece.Colour == Colour.White ? char.ToUpper(character) : character;
     }
 
     public static Piece FromForsythEdwardsNotation(char piece) => piece switch
@@ -98,7 +98,24 @@ public record Piece
     public override string ToString() => $"{Colour} {Type}";
 }
 
-public enum PieceType
+public enum PieceTypeInternal : byte
+{
+    None = 0,
+    BlackPawn,
+    BlackBishop,
+    BlackKnight,
+    BlackRook,
+    BlackQueen,
+    BlackKing,
+    WhitePawn,
+    WhiteBishop,
+    WhiteKnight,
+    WhiteRook,
+    WhiteQueen,
+    WhiteKing
+}
+
+public enum PieceType : byte
 {
     Pawn,
     Bishop,
