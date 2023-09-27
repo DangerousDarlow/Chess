@@ -5,14 +5,36 @@ namespace ChessCoreTest;
 public class GetValidMovesTests
 {
     [Test]
-    public void Pawn_can_advance_one_square()
+    public void Pawn_can_advance_one_rank()
     {
-        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/P7/8 w - - 0 1");
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/8/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves, Has.Count.EqualTo(1));
         Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
-        Assert.That(moves[0].From, Is.EqualTo("a2"));
-        Assert.That(moves[0].To, Is.EqualTo("a3"));
+        Assert.That(moves[0].From, Is.EqualTo("a3"));
+        Assert.That(moves[0].To, Is.EqualTo("a4"));
+    }
+
+    [Test]
+    public void Pawn_can_advance_two_ranks_from_starting_rank()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/P7/8 w - - 0 1");
+        var moves = board.GetValidMovesForColour(Colour.White);
+        Assert.That(moves, Has.Count.EqualTo(2));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
+            Assert.That(moves[0].From, Is.EqualTo("a2"));
+            Assert.That(moves[0].To, Is.EqualTo("a3"));
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(moves[1].Type, Is.EqualTo(MoveType.Move));
+            Assert.That(moves[1].From, Is.EqualTo("a2"));
+            Assert.That(moves[1].To, Is.EqualTo("a4"));
+        });
     }
 
     [Test]

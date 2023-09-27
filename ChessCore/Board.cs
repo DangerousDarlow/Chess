@@ -178,22 +178,33 @@ public class Board
         var (rank, file) = BoardExtensions.RankAndFileFromIndex(position);
 
         // Advance and capture both move forward
-        var rankNext = (byte) (colour == Colour.White ? rank + 1 : rank - 1);
-        if (IsRankOrFileInBounds(rankNext) is false)
+        var rankAdvance = (byte) (colour == Colour.White ? rank + 1 : rank - 1);
+        if (IsRankOrFileInBounds(rankAdvance) is false)
             return Enumerable.Empty<Move>();
 
         var moves = new List<Move>();
 
         // Advance
-        var indexAdvance = BoardExtensions.IndexFromRankAndFile(rankNext, file);
+        var indexAdvance = BoardExtensions.IndexFromRankAndFile(rankAdvance, file);
         if (this[indexAdvance] is null)
+        {
             moves.Add(new Move(MoveType.Move, position, indexAdvance));
+
+            // Double advance from starting position
+            if (colour == Colour.White && rank == 2 || colour == Colour.Black && rank == 7)
+            {
+                var rankDoubleAdvance = (byte) (colour == Colour.White ? rank + 2 : rank - 2);
+                var indexDoubleAdvance = BoardExtensions.IndexFromRankAndFile(rankDoubleAdvance, file);
+                if (this[indexDoubleAdvance] is null)
+                    moves.Add(new Move(MoveType.Move, position, indexDoubleAdvance));
+            }
+        }
 
         // Capture left
         var fileCaptureLeft = (byte) (file - 1);
         if (IsRankOrFileInBounds(fileCaptureLeft))
         {
-            var indexCaptureLeft = BoardExtensions.IndexFromRankAndFile(rankNext, fileCaptureLeft);
+            var indexCaptureLeft = BoardExtensions.IndexFromRankAndFile(rankAdvance, fileCaptureLeft);
             var pieceCaptureLeft = this[indexCaptureLeft];
             if (pieceCaptureLeft is not null && pieceCaptureLeft.Colour != colour)
                 moves.Add(new Move(MoveType.Capture, position, indexCaptureLeft));
@@ -203,7 +214,7 @@ public class Board
         var fileCaptureRight = (byte) (file + 1);
         if (IsRankOrFileInBounds(fileCaptureRight))
         {
-            var indexCaptureRight = BoardExtensions.IndexFromRankAndFile(rankNext, fileCaptureRight);
+            var indexCaptureRight = BoardExtensions.IndexFromRankAndFile(rankAdvance, fileCaptureRight);
             var pieceCaptureRight = this[indexCaptureRight];
             if (pieceCaptureRight is not null && pieceCaptureRight.Colour != colour)
                 moves.Add(new Move(MoveType.Capture, position, indexCaptureRight));
