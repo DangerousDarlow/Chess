@@ -1,3 +1,4 @@
+using System.Data.Common;
 using ChessCore;
 
 namespace ChessCoreTest;
@@ -71,10 +72,10 @@ public class BoardTests
         // file = vertical column
         Assert.Multiple(() =>
         {
-            Assert.That(BoardExtensions.IndexFromRankAndFile(rank, file), Is.EqualTo(index));
-            Assert.That(BoardExtensions.IndexFromRankAndFile(rank, file).PositionAsAlgebraicNotation(), Is.EqualTo(position));
+            Assert.That(Board.IndexFromRankAndFile(rank, file), Is.EqualTo(index));
+            Assert.That(Board.IndexFromRankAndFile(rank, file).PositionAsAlgebraicNotation(), Is.EqualTo(position));
 
-            var (rankFromIndex, fileFromIndex) = BoardExtensions.RankAndFileFromIndex(index);
+            var (rankFromIndex, fileFromIndex) = Board.RankAndFileFromIndex(index);
             Assert.That(rankFromIndex, Is.EqualTo(rank));
             Assert.That(fileFromIndex, Is.EqualTo(file));
         });
@@ -83,9 +84,9 @@ public class BoardTests
     [TestCase(0, 0)]
     [TestCase(9, 9)]
     public void IndexFromRankAndFile_throws_if_out_of_range(byte rank, byte file) =>
-        Assert.That(() => BoardExtensions.IndexFromRankAndFile(rank, file), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
+        Assert.That(() => Board.IndexFromRankAndFile(rank, file), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
 
     [Test]
     public void RankAndFileFromIndex_throws_if_out_of_range() =>
-        Assert.That(() => BoardExtensions.RankAndFileFromIndex(64), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
+        Assert.That(() => Board.RankAndFileFromIndex(64), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
 }
