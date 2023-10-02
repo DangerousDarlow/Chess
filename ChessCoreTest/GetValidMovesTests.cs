@@ -1,4 +1,5 @@
 ﻿using ChessCore;
+using static ChessCore.Position;
 
 namespace ChessCoreTest;
 
@@ -10,9 +11,8 @@ public class GetValidMovesTests
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/8/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves, Has.Count.EqualTo(1));
-        Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
-        Assert.That(moves[0].From, Is.EqualTo("a3"));
-        Assert.That(moves[0].To, Is.EqualTo("a4"));
+        Assert.That(moves[0].From, Is.EqualTo(a3));
+        Assert.That(moves[0].To, Is.EqualTo(a4));
     }
 
     [Test]
@@ -24,16 +24,14 @@ public class GetValidMovesTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
-            Assert.That(moves[0].From, Is.EqualTo("a2"));
-            Assert.That(moves[0].To, Is.EqualTo("a3"));
+            Assert.That(moves[0].From, Is.EqualTo(a2));
+            Assert.That(moves[0].To, Is.EqualTo(a3));
         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(moves[1].Type, Is.EqualTo(MoveType.Move));
-            Assert.That(moves[1].From, Is.EqualTo("a2"));
-            Assert.That(moves[1].To, Is.EqualTo("a4"));
+            Assert.That(moves[1].From, Is.EqualTo(a2));
+            Assert.That(moves[1].To, Is.EqualTo(a4));
         });
     }
 
@@ -43,9 +41,8 @@ public class GetValidMovesTests
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/P7/8 w - - 0 1");
         var moves = board.GetValidMovesForColour(Colour.White);
         Assert.That(moves, Has.Count.EqualTo(1));
-        Assert.That(moves[0].Type, Is.EqualTo(MoveType.Move));
-        Assert.That(moves[0].From, Is.EqualTo("a3"));
-        Assert.That(moves[0].To, Is.EqualTo("a4"));
+        Assert.That(moves[0].From, Is.EqualTo(a3));
+        Assert.That(moves[0].To, Is.EqualTo(a4));
     }
 
     [Test]
@@ -82,16 +79,14 @@ public class GetValidMovesTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(moves[0].Type, Is.EqualTo(MoveType.Capture));
-            Assert.That(moves[0].From, Is.EqualTo("b1"));
-            Assert.That(moves[0].To, Is.EqualTo("a2"));
+            Assert.That(moves[0].From, Is.EqualTo(b1));
+            Assert.That(moves[0].To, Is.EqualTo(a2));
         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(moves[1].Type, Is.EqualTo(MoveType.Capture));
-            Assert.That(moves[1].From, Is.EqualTo("b1"));
-            Assert.That(moves[1].To, Is.EqualTo("c2"));
+            Assert.That(moves[1].From, Is.EqualTo(b1));
+            Assert.That(moves[1].To, Is.EqualTo(c2));
         });
     }
 }

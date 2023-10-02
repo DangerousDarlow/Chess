@@ -1,5 +1,5 @@
-using System.Data.Common;
 using ChessCore;
+using static ChessCore.Position;
 
 namespace ChessCoreTest;
 
@@ -15,39 +15,39 @@ public class BoardTests
 
     private static void AssertSetupForNewGame(Board board)
     {
-        Assert.That(board["a1"], Is.EqualTo(Piece.WhiteRook));
-        Assert.That(board["b1"], Is.EqualTo(Piece.WhiteKnight));
-        Assert.That(board["c1"], Is.EqualTo(Piece.WhiteBishop));
-        Assert.That(board["d1"], Is.EqualTo(Piece.WhiteQueen));
-        Assert.That(board["e1"], Is.EqualTo(Piece.WhiteKing));
-        Assert.That(board["f1"], Is.EqualTo(Piece.WhiteBishop));
-        Assert.That(board["g1"], Is.EqualTo(Piece.WhiteKnight));
-        Assert.That(board["h1"], Is.EqualTo(Piece.WhiteRook));
-        Assert.That(board["a2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["b2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["c2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["d2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["e2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["f2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["g2"], Is.EqualTo(Piece.WhitePawn));
-        Assert.That(board["h2"], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[a1], Is.EqualTo(Piece.WhiteRook));
+        Assert.That(board[b1], Is.EqualTo(Piece.WhiteKnight));
+        Assert.That(board[c1], Is.EqualTo(Piece.WhiteBishop));
+        Assert.That(board[d1], Is.EqualTo(Piece.WhiteQueen));
+        Assert.That(board[e1], Is.EqualTo(Piece.WhiteKing));
+        Assert.That(board[f1], Is.EqualTo(Piece.WhiteBishop));
+        Assert.That(board[g1], Is.EqualTo(Piece.WhiteKnight));
+        Assert.That(board[h1], Is.EqualTo(Piece.WhiteRook));
+        Assert.That(board[a2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[b2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[c2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[d2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[e2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[f2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[g2], Is.EqualTo(Piece.WhitePawn));
+        Assert.That(board[h2], Is.EqualTo(Piece.WhitePawn));
 
-        Assert.That(board["a7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["b7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["c7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["d7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["e7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["f7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["g7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["h7"], Is.EqualTo(Piece.BlackPawn));
-        Assert.That(board["a8"], Is.EqualTo(Piece.BlackRook));
-        Assert.That(board["b8"], Is.EqualTo(Piece.BlackKnight));
-        Assert.That(board["c8"], Is.EqualTo(Piece.BlackBishop));
-        Assert.That(board["d8"], Is.EqualTo(Piece.BlackQueen));
-        Assert.That(board["e8"], Is.EqualTo(Piece.BlackKing));
-        Assert.That(board["f8"], Is.EqualTo(Piece.BlackBishop));
-        Assert.That(board["g8"], Is.EqualTo(Piece.BlackKnight));
-        Assert.That(board["h8"], Is.EqualTo(Piece.BlackRook));
+        Assert.That(board[a7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[b7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[c7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[d7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[e7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[f7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[g7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[h7], Is.EqualTo(Piece.BlackPawn));
+        Assert.That(board[a8], Is.EqualTo(Piece.BlackRook));
+        Assert.That(board[b8], Is.EqualTo(Piece.BlackKnight));
+        Assert.That(board[c8], Is.EqualTo(Piece.BlackBishop));
+        Assert.That(board[d8], Is.EqualTo(Piece.BlackQueen));
+        Assert.That(board[e8], Is.EqualTo(Piece.BlackKing));
+        Assert.That(board[f8], Is.EqualTo(Piece.BlackBishop));
+        Assert.That(board[g8], Is.EqualTo(Piece.BlackKnight));
+        Assert.That(board[h8], Is.EqualTo(Piece.BlackRook));
 
         Assert.That(board.WhiteTurn, Is.True);
         Assert.That(board.FullMoveNumber, Is.EqualTo(1));

@@ -1,13 +1,19 @@
 ﻿using System.Text;
+using static ChessCore.Position;
 
 namespace ChessCore;
 
 public class Board
 {
-    public const int Size = 8;
+    private const int Size = 8;
 
-    public const int IndexSize = Size * Size;
+    private const int IndexSize = Size * Size;
 
+    /// <summary>
+    ///     There are 32 chess pieces so half this array will be empty. An array of pieces was considered as an
+    ///     alternative however position and piece bytes would need to be stored therefore the array would be
+    ///     the same size. In addition querying the piece at a location would require iteration.
+    /// </summary>
     private readonly PieceTypeInternal[] _board = new PieceTypeInternal[IndexSize];
 
     private Board(string fen)
@@ -17,38 +23,38 @@ public class Board
 
     private Board()
     {
-        this["a1"] = Piece.WhiteRook;
-        this["b1"] = Piece.WhiteKnight;
-        this["c1"] = Piece.WhiteBishop;
-        this["d1"] = Piece.WhiteQueen;
-        this["e1"] = Piece.WhiteKing;
-        this["f1"] = Piece.WhiteBishop;
-        this["g1"] = Piece.WhiteKnight;
-        this["h1"] = Piece.WhiteRook;
-        this["a2"] = Piece.WhitePawn;
-        this["b2"] = Piece.WhitePawn;
-        this["c2"] = Piece.WhitePawn;
-        this["d2"] = Piece.WhitePawn;
-        this["e2"] = Piece.WhitePawn;
-        this["f2"] = Piece.WhitePawn;
-        this["g2"] = Piece.WhitePawn;
-        this["h2"] = Piece.WhitePawn;
-        this["a7"] = Piece.BlackPawn;
-        this["b7"] = Piece.BlackPawn;
-        this["c7"] = Piece.BlackPawn;
-        this["d7"] = Piece.BlackPawn;
-        this["e7"] = Piece.BlackPawn;
-        this["f7"] = Piece.BlackPawn;
-        this["g7"] = Piece.BlackPawn;
-        this["h7"] = Piece.BlackPawn;
-        this["a8"] = Piece.BlackRook;
-        this["b8"] = Piece.BlackKnight;
-        this["c8"] = Piece.BlackBishop;
-        this["d8"] = Piece.BlackQueen;
-        this["e8"] = Piece.BlackKing;
-        this["f8"] = Piece.BlackBishop;
-        this["g8"] = Piece.BlackKnight;
-        this["h8"] = Piece.BlackRook;
+        this[a1] = Piece.WhiteRook;
+        this[b1] = Piece.WhiteKnight;
+        this[c1] = Piece.WhiteBishop;
+        this[d1] = Piece.WhiteQueen;
+        this[e1] = Piece.WhiteKing;
+        this[f1] = Piece.WhiteBishop;
+        this[g1] = Piece.WhiteKnight;
+        this[h1] = Piece.WhiteRook;
+        this[a2] = Piece.WhitePawn;
+        this[b2] = Piece.WhitePawn;
+        this[c2] = Piece.WhitePawn;
+        this[d2] = Piece.WhitePawn;
+        this[e2] = Piece.WhitePawn;
+        this[f2] = Piece.WhitePawn;
+        this[g2] = Piece.WhitePawn;
+        this[h2] = Piece.WhitePawn;
+        this[a7] = Piece.BlackPawn;
+        this[b7] = Piece.BlackPawn;
+        this[c7] = Piece.BlackPawn;
+        this[d7] = Piece.BlackPawn;
+        this[e7] = Piece.BlackPawn;
+        this[f7] = Piece.BlackPawn;
+        this[g7] = Piece.BlackPawn;
+        this[h7] = Piece.BlackPawn;
+        this[a8] = Piece.BlackRook;
+        this[b8] = Piece.BlackKnight;
+        this[c8] = Piece.BlackBishop;
+        this[d8] = Piece.BlackQueen;
+        this[e8] = Piece.BlackKing;
+        this[f8] = Piece.BlackBishop;
+        this[g8] = Piece.BlackKnight;
+        this[h8] = Piece.BlackRook;
     }
 
     public bool WhiteTurn { get; private set; } = true;
@@ -57,10 +63,10 @@ public class Board
 
     public ushort HalfMoveClock { get; private set; }
 
-    public Piece? this[string position]
+    public Piece? this[Position position]
     {
-        get => _board[position.PositionAsByte()].ToPiece();
-        private init => _board[position.PositionAsByte()] = value.ToPieceTypeInternal();
+        get => _board[(byte) position].ToPiece();
+        private init => _board[(byte) position] = value.ToPieceTypeInternal();
     }
 
     private Piece? this[byte position] => _board[position].ToPiece();
@@ -188,7 +194,7 @@ public class Board
         var indexAdvance = IndexFromRankAndFile(rankAdvance, file);
         if (this[indexAdvance] is null)
         {
-            moves.Add(new Move(MoveType.Move, position, indexAdvance));
+            moves.Add(new Move((Position) position, (Position) indexAdvance));
 
             // Double advance from starting position
             if ((colour == Colour.White && rank == 2) || (colour == Colour.Black && rank == 7))
@@ -196,7 +202,7 @@ public class Board
                 var rankDoubleAdvance = (byte) (colour == Colour.White ? rank + 2 : rank - 2);
                 var indexDoubleAdvance = IndexFromRankAndFile(rankDoubleAdvance, file);
                 if (this[indexDoubleAdvance] is null)
-                    moves.Add(new Move(MoveType.Move, position, indexDoubleAdvance));
+                    moves.Add(new Move((Position) position, (Position) indexDoubleAdvance));
             }
         }
 
@@ -207,7 +213,7 @@ public class Board
             var indexCaptureLeft = IndexFromRankAndFile(rankAdvance, fileCaptureLeft);
             var pieceCaptureLeft = this[indexCaptureLeft];
             if (pieceCaptureLeft is not null && pieceCaptureLeft.Colour != colour)
-                moves.Add(new Move(MoveType.Capture, position, indexCaptureLeft));
+                moves.Add(new Move((Position) position, (Position) indexCaptureLeft));
         }
 
         // Capture right
@@ -217,7 +223,7 @@ public class Board
             var indexCaptureRight = IndexFromRankAndFile(rankAdvance, fileCaptureRight);
             var pieceCaptureRight = this[indexCaptureRight];
             if (pieceCaptureRight is not null && pieceCaptureRight.Colour != colour)
-                moves.Add(new Move(MoveType.Capture, position, indexCaptureRight));
+                moves.Add(new Move((Position) position, (Position) indexCaptureRight));
         }
 
         return moves;
