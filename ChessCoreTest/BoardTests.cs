@@ -63,19 +63,17 @@ public class BoardTests
         Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
 
     [Test]
-    [TestCase(1, 1, 0, "a1")]
-    [TestCase(1, 8, 7, "h1")]
-    [TestCase(8, 1, 56, "a8")]
-    [TestCase(8, 8, 63, "h8")]
-    public void Rank_and_file_maps_to_board_position(byte rank, byte file, byte index, string position) =>
+    [TestCase(1, 1, a1)]
+    [TestCase(1, 8, h1)]
+    [TestCase(8, 1, a8)]
+    [TestCase(8, 8, h8)]
+    public void Rank_and_file_maps_to_board_position(byte rank, byte file, Position position) =>
         // rank = horizontal row
         // file = vertical column
         Assert.Multiple(() =>
         {
-            Assert.That(Board.IndexFromRankAndFile(rank, file), Is.EqualTo(index));
-            Assert.That(Board.IndexFromRankAndFile(rank, file).PositionAsAlgebraicNotation(), Is.EqualTo(position));
-
-            var (rankFromIndex, fileFromIndex) = Board.RankAndFileFromIndex(index);
+            Assert.That(Board.PositionFromRankAndFile(rank, file), Is.EqualTo(position));
+            var (rankFromIndex, fileFromIndex) = Board.RankAndFileFromPosition(position);
             Assert.That(rankFromIndex, Is.EqualTo(rank));
             Assert.That(fileFromIndex, Is.EqualTo(file));
         });
@@ -84,9 +82,9 @@ public class BoardTests
     [TestCase(0, 0)]
     [TestCase(9, 9)]
     public void IndexFromRankAndFile_throws_if_out_of_range(byte rank, byte file) =>
-        Assert.That(() => Board.IndexFromRankAndFile(rank, file), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
+        Assert.That(() => Board.PositionFromRankAndFile(rank, file), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
 
     [Test]
     public void RankAndFileFromIndex_throws_if_out_of_range() =>
-        Assert.That(() => Board.RankAndFileFromIndex(64), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
+        Assert.That(() => Board.RankAndFileFromPosition((Position) 64), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
 }

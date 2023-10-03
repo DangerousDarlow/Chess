@@ -231,7 +231,7 @@ public class Board
 
     private static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
 
-    public static byte IndexFromRankAndFile(byte rank, byte file)
+    private static byte IndexFromRankAndFile(byte rank, byte file)
     {
         if (IsRankOrFileInBounds(rank) == false)
             throw new ArgumentOutOfRangeException(nameof(rank));
@@ -242,13 +242,17 @@ public class Board
         return (byte) ((rank - 1) * Size + (file - 1));
     }
 
-    public static (byte rank, byte file) RankAndFileFromIndex(byte index)
+    public static Position PositionFromRankAndFile(byte rank, byte file) => (Position) IndexFromRankAndFile(rank, file);
+
+    private static (byte rank, byte file) RankAndFileFromIndex(byte index)
     {
         if (index >= IndexSize)
             throw new ArgumentOutOfRangeException(nameof(index));
 
         return ((byte) (index / Size + 1), (byte) (index % Size + 1));
     }
+
+    public static (byte rank, byte file) RankAndFileFromPosition(Position position) => RankAndFileFromIndex((byte) position);
 }
 
 public static class BoardExtensions
