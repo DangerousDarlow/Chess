@@ -75,7 +75,15 @@ public class Board
         this[move.From] = null;
     }
 
-    private Piece? this[byte position] => _board[position].ToPiece();
+    public IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour)
+    {
+        for (byte index = 0; index < _board.Length; ++index)
+        {
+            var piece = _board[index].ToPiece();
+            if (piece?.Colour == colour)
+                yield return ((Position) index, piece);
+        }
+    }
 
     public static Board CreateWithNewGameSetup() => new();
 
@@ -164,78 +172,7 @@ public class Board
 
     public override string ToString() => ToForsythEdwardsNotation();
 
-    public List<Move> GetValidMovesForColour(Colour colour)
-    {
-        var moves = new List<Move>();
-
-        for (byte index = 0; index < _board.Length; ++index)
-        {
-            var piece = _board[index].ToPiece();
-            if (piece == null || piece.Colour != colour)
-                continue;
-
-            var pieceMoves = piece.Type switch
-            {
-                PieceType.Pawn => GetValidPawnMoves(colour, index)
-            };
-
-            moves.AddRange(pieceMoves);
-        }
-
-        return moves;
-    }
-
-    private IEnumerable<Move> GetValidPawnMoves(Colour colour, byte position)
-    {
-        var (rank, file) = RankAndFileFromIndex(position);
-
-        // Advance and capture both move forward
-        var rankAdvance = (byte) (colour == Colour.White ? rank + 1 : rank - 1);
-        if (IsRankOrFileInBounds(rankAdvance) is false)
-            return Enumerable.Empty<Move>();
-
-        var moves = new List<Move>();
-
-        // Advance
-        var indexAdvance = IndexFromRankAndFile(rankAdvance, file);
-        if (this[indexAdvance] is null)
-        {
-            moves.Add(new Move((Position) position, (Position) indexAdvance));
-
-            // Double advance from starting position
-            if ((colour == Colour.White && rank == 2) || (colour == Colour.Black && rank == 7))
-            {
-                var rankDoubleAdvance = (byte) (colour == Colour.White ? rank + 2 : rank - 2);
-                var indexDoubleAdvance = IndexFromRankAndFile(rankDoubleAdvance, file);
-                if (this[indexDoubleAdvance] is null)
-                    moves.Add(new Move((Position) position, (Position) indexDoubleAdvance));
-            }
-        }
-
-        // Capture left
-        var fileCaptureLeft = (byte) (file - 1);
-        if (IsRankOrFileInBounds(fileCaptureLeft))
-        {
-            var indexCaptureLeft = IndexFromRankAndFile(rankAdvance, fileCaptureLeft);
-            var pieceCaptureLeft = this[indexCaptureLeft];
-            if (pieceCaptureLeft is not null && pieceCaptureLeft.Colour != colour)
-                moves.Add(new Move((Position) position, (Position) indexCaptureLeft));
-        }
-
-        // Capture right
-        var fileCaptureRight = (byte) (file + 1);
-        if (IsRankOrFileInBounds(fileCaptureRight))
-        {
-            var indexCaptureRight = IndexFromRankAndFile(rankAdvance, fileCaptureRight);
-            var pieceCaptureRight = this[indexCaptureRight];
-            if (pieceCaptureRight is not null && pieceCaptureRight.Colour != colour)
-                moves.Add(new Move((Position) position, (Position) indexCaptureRight));
-        }
-
-        return moves;
-    }
-
-    private static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
+    public static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
 
     private static byte IndexFromRankAndFile(byte rank, byte file)
     {

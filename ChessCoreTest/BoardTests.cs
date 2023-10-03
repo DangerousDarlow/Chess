@@ -63,6 +63,33 @@ public class BoardTests
         Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
 
     [Test]
+    public void Piece_can_be_moved_to_any_position_on_the_board_ignoring_piece_move_rules()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/K7 w - - 0 1");
+
+        Assert.That(board[a1], Is.EqualTo(Piece.WhiteKing));
+        Assert.That(board[h8], Is.Null);
+
+        // Validation that the move is legal according to chess rules is not the responsibility of this function
+        board.ApplyMove(new Move(a1, h8));
+
+        Assert.That(board[a1], Is.Null);
+        Assert.That(board[h8], Is.EqualTo(Piece.WhiteKing));
+    }
+
+    [Test]
+    public void Pieces_of_colour_can_be_retrieved()
+    {
+        var whitePieces = _board.PiecesOfColour(Colour.White).ToList();
+        Assert.That(whitePieces, Has.Count.EqualTo(16));
+        Assert.That(whitePieces, Has.Exactly(1).Matches<(Position position, Piece piece)>(x => x.position == a1 && x.piece == Piece.WhiteRook));
+
+        var blackPieces = _board.PiecesOfColour(Colour.Black).ToList();
+        Assert.That(blackPieces, Has.Count.EqualTo(16));
+        Assert.That(blackPieces, Has.Exactly(1).Matches<(Position position, Piece piece)>(x => x.position == h8 && x.piece == Piece.BlackRook));
+    }
+
+    [Test]
     [TestCase(1, 1, a1)]
     [TestCase(1, 8, h1)]
     [TestCase(8, 1, a8)]
@@ -87,19 +114,4 @@ public class BoardTests
     [Test]
     public void RankAndFileFromIndex_throws_if_out_of_range() =>
         Assert.That(() => Board.RankAndFileFromPosition((Position) 64), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
-
-    [Test]
-    public void Piece_can_be_moved_to_any_position_on_the_board_ignoring_piece_move_rules()
-    {
-        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/K7 w - - 0 1");
-
-        Assert.That(board[a1], Is.EqualTo(Piece.WhiteKing));
-        Assert.That(board[h8], Is.Null);
-
-        // Validation that the move is legal according to chess rules is not the responsibility of this function
-        board.ApplyMove(new Move(a1, h8));
-
-        Assert.That(board[a1], Is.Null);
-        Assert.That(board[h8], Is.EqualTo(Piece.WhiteKing));
-    }
 }
