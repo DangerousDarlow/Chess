@@ -87,4 +87,19 @@ public class BoardTests
     [Test]
     public void RankAndFileFromIndex_throws_if_out_of_range() =>
         Assert.That(() => Board.RankAndFileFromPosition((Position) 64), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
+
+    [Test]
+    public void Piece_can_be_moved_to_any_position_on_the_board_ignoring_piece_move_rules()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/K7 w - - 0 1");
+
+        Assert.That(board[a1], Is.EqualTo(Piece.WhiteKing));
+        Assert.That(board[h8], Is.Null);
+
+        // Validation that the move is legal according to chess rules is not the responsibility of this function
+        board.ApplyMove(new Move(a1, h8));
+
+        Assert.That(board[a1], Is.Null);
+        Assert.That(board[h8], Is.EqualTo(Piece.WhiteKing));
+    }
 }

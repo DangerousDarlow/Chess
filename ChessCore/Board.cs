@@ -66,7 +66,13 @@ public class Board
     public Piece? this[Position position]
     {
         get => _board[(byte) position].ToPiece();
-        private init => _board[(byte) position] = value.ToPieceTypeInternal();
+        private set => _board[(byte) position] = value.ToPieceTypeInternal();
+    }
+
+    public void ApplyMove(Move move)
+    {
+        this[move.To] = this[move.From];
+        this[move.From] = null;
     }
 
     private Piece? this[byte position] => _board[position].ToPiece();
