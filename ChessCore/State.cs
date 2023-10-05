@@ -7,7 +7,7 @@ public class State
         Board = board;
     }
 
-    public Board Board { get; }
+    private Board Board { get; }
 
     public List<Move> GetMovesForColour(Colour colour)
     {
@@ -49,25 +49,21 @@ public class State
         }
 
         // Capture left
-        var fileCaptureLeft = (byte) (file - 1);
-        if (Board.IsRankOrFileInBounds(fileCaptureLeft))
-        {
-            var positionCaptureLeft = Board.PositionFromRankAndFile(rankAdvance, fileCaptureLeft);
-            var pieceCaptureLeft = Board[positionCaptureLeft];
-            if (pieceCaptureLeft is not null && pieceCaptureLeft.Colour != colour)
-                moves.Add(new Move(position, positionCaptureLeft));
-        }
+        AddPawnCaptureMove(position, colour, (byte) (file - 1), rankAdvance, moves);
 
         // Capture right
-        var fileCaptureRight = (byte) (file + 1);
-        if (Board.IsRankOrFileInBounds(fileCaptureRight))
-        {
-            var positionCaptureRight = Board.PositionFromRankAndFile(rankAdvance, fileCaptureRight);
-            var pieceCaptureRight = Board[positionCaptureRight];
-            if (pieceCaptureRight is not null && pieceCaptureRight.Colour != colour)
-                moves.Add(new Move(position, positionCaptureRight));
-        }
+        AddPawnCaptureMove(position, colour, (byte) (file + 1), rankAdvance, moves);
 
         return moves;
+    }
+
+    private void AddPawnCaptureMove(Position position, Colour colour, byte file, byte rank, ICollection<Move> moves)
+    {
+        if (!Board.IsRankOrFileInBounds(file)) return;
+
+        var positionCapture = Board.PositionFromRankAndFile(rank, file);
+        var pieceCapture = Board[positionCapture];
+        if (pieceCapture is not null && pieceCapture.Colour != colour)
+            moves.Add(new Move(position, positionCapture, MoveType.Capture));
     }
 }

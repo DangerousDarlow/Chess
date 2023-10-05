@@ -3,7 +3,7 @@ using static ChessCore.Position;
 
 namespace ChessCoreTest;
 
-public class GetValidMovesTests
+public class PawnMovesTests
 {
     [Test]
     public void Pawn_can_advance_one_rank()
