@@ -65,8 +65,12 @@ public class Board
 
     public Piece? this[Position position]
     {
-        get => _board[(byte) position].ToPiece();
-        private set => _board[(byte) position] = value.ToPieceTypeInternal();
+        get => position == None ? null : _board[(byte) position].ToPiece();
+        private set
+        {
+            if (position != None)
+                _board[(byte) position] = value.ToPieceTypeInternal();
+        }
     }
 
     public void ApplyMove(Move move)
