@@ -17,7 +17,8 @@ public class State
             moves.AddRange(
                 piece.Type switch
                 {
-                    PieceType.Pawn => GetPawnMoves(position, colour)
+                    PieceType.Pawn => GetPawnMoves(position, colour),
+                    PieceType.Queen => GetQueenMoves(position, colour)
                 });
 
         return moves;
@@ -66,4 +67,78 @@ public class State
         if (pieceCapture is not null && pieceCapture.Colour != colour)
             moves.Add(new Move(position, positionCapture, MoveType.Capture));
     }
+
+    private IEnumerable<Move> GetQueenMoves(Position position, Colour colour)
+    {
+        var moves = new List<Move>();
+        moves.AddRange(AddMovesNorth(position, colour, true));
+        moves.AddRange(AddMovesNorthEast(position, colour, true));
+        moves.AddRange(AddMovesEast(position, colour, true));
+        moves.AddRange(AddMovesSouthEast(position, colour, true));
+        moves.AddRange(AddMovesSouth(position, colour, true));
+        moves.AddRange(AddMovesSouthWest(position, colour, true));
+        moves.AddRange(AddMovesWest(position, colour, true));
+        moves.AddRange(AddMovesNorthWest(position, colour, true));
+        return moves;
+    }
+
+    private IEnumerable<Move> AddMovesNorth(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(1, 0), colour, iterate);
+
+    private IEnumerable<Move> AddMovesNorthEast(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(1, 1), colour, iterate);
+
+    private IEnumerable<Move> AddMovesEast(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(0, 1), colour, iterate);
+
+    private IEnumerable<Move> AddMovesSouthEast(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(-1, 1), colour, iterate);
+
+    private IEnumerable<Move> AddMovesSouth(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(-1, 0), colour, iterate);
+
+    private IEnumerable<Move> AddMovesSouthWest(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(-1, -1), colour, iterate);
+
+    private IEnumerable<Move> AddMovesWest(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(0, -1), colour, iterate);
+
+    private IEnumerable<Move> AddMovesNorthWest(Position position, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(position, new RankAndFileChange(1, -1), colour, iterate);
+
+    private IEnumerable<Move> AddMoveAfterPositionChange(Position position, RankAndFileChange change, Colour colour, bool iterate)
+    {
+        var moves = new List<Move>();
+        var (rank, file) = Board.RankAndFileFromPosition(position);
+
+        do
+        {
+            rank = (byte) (rank + change.RankChange);
+            file = (byte) (file + change.FileChange);
+
+            if (Board.IsRankOrFileInBounds(rank) is false || Board.IsRankOrFileInBounds(file) is false)
+                return moves;
+
+            var toPosition = Board.PositionFromRankAndFile(rank, file);
+            var piece = Board[toPosition];
+
+            if (piece is null)
+            {
+                moves.Add(new Move(position, toPosition));
+                continue;
+            }
+
+            if (piece.Colour != colour)
+                moves.Add(new Move(position, toPosition, MoveType.Capture));
+
+            return moves;
+
+            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
+            // Loop exits when position is out of bounds or occupied by another piece
+        } while (iterate);
+
+        return moves;
+    }
 }
+
+public record RankAndFileChange(sbyte RankChange, sbyte FileChange);
