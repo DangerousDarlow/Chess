@@ -18,6 +18,7 @@ public class State
                 piece.Type switch
                 {
                     PieceType.Pawn => GetPawnMoves(position, colour),
+                    PieceType.Bishop => GetBishopMoves(position, colour),
                     PieceType.Queen => GetQueenMoves(position, colour),
                     PieceType.King => GetKingMoves(position, colour)
                 });
@@ -56,6 +57,16 @@ public class State
         // Capture right
         AddPawnCaptureMove(position, colour, (byte) (file + 1), rankAdvance, moves);
 
+        return moves;
+    }
+
+    private IEnumerable<Move> GetBishopMoves(Position position, Colour colour)
+    {
+        var moves = new List<Move>();
+        moves.AddRange(AddMovesNorthEast(position, colour, true));
+        moves.AddRange(AddMovesSouthEast(position, colour, true));
+        moves.AddRange(AddMovesSouthWest(position, colour, true));
+        moves.AddRange(AddMovesNorthWest(position, colour, true));
         return moves;
     }
 
