@@ -18,7 +18,8 @@ public class State
                 piece.Type switch
                 {
                     PieceType.Pawn => GetPawnMoves(position, colour),
-                    PieceType.Queen => GetQueenMoves(position, colour)
+                    PieceType.Queen => GetQueenMoves(position, colour),
+                    PieceType.King => GetKingMoves(position, colour)
                 });
 
         return moves;
@@ -79,6 +80,20 @@ public class State
         moves.AddRange(AddMovesSouthWest(position, colour, true));
         moves.AddRange(AddMovesWest(position, colour, true));
         moves.AddRange(AddMovesNorthWest(position, colour, true));
+        return moves;
+    }
+
+    private IEnumerable<Move> GetKingMoves(Position position, Colour colour)
+    {
+        var moves = new List<Move>();
+        moves.AddRange(AddMovesNorth(position, colour, false));
+        moves.AddRange(AddMovesNorthEast(position, colour, false));
+        moves.AddRange(AddMovesEast(position, colour, false));
+        moves.AddRange(AddMovesSouthEast(position, colour, false));
+        moves.AddRange(AddMovesSouth(position, colour, false));
+        moves.AddRange(AddMovesSouthWest(position, colour, false));
+        moves.AddRange(AddMovesWest(position, colour, false));
+        moves.AddRange(AddMovesNorthWest(position, colour, false));
         return moves;
     }
 

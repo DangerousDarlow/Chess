@@ -10,6 +10,5 @@ public enum MoveType : byte
     Move,
     Capture,
     EnPassant,
-    Castle,
-    Promotion
+    Castle
 }
