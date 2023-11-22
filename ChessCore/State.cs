@@ -19,6 +19,7 @@ public class State
                 {
                     PieceType.Pawn => GetPawnMoves(position, colour),
                     PieceType.Bishop => GetBishopMoves(position, colour),
+                    PieceType.Rook => GetRookMoves(position, colour),
                     PieceType.Queen => GetQueenMoves(position, colour),
                     PieceType.King => GetKingMoves(position, colour)
                 });
@@ -60,6 +61,16 @@ public class State
         return moves;
     }
 
+    private void AddPawnCaptureMove(Position position, Colour colour, byte file, byte rank, ICollection<Move> moves)
+    {
+        if (!Board.IsRankOrFileInBounds(file)) return;
+
+        var positionCapture = Board.PositionFromRankAndFile(rank, file);
+        var pieceCapture = Board[positionCapture];
+        if (pieceCapture is not null && pieceCapture.Colour != colour)
+            moves.Add(new Move(position, positionCapture, MoveType.Capture));
+    }
+
     private IEnumerable<Move> GetBishopMoves(Position position, Colour colour)
     {
         var moves = new List<Move>();
@@ -70,14 +81,14 @@ public class State
         return moves;
     }
 
-    private void AddPawnCaptureMove(Position position, Colour colour, byte file, byte rank, ICollection<Move> moves)
+    private IEnumerable<Move> GetRookMoves(Position position, Colour colour)
     {
-        if (!Board.IsRankOrFileInBounds(file)) return;
-
-        var positionCapture = Board.PositionFromRankAndFile(rank, file);
-        var pieceCapture = Board[positionCapture];
-        if (pieceCapture is not null && pieceCapture.Colour != colour)
-            moves.Add(new Move(position, positionCapture, MoveType.Capture));
+        var moves = new List<Move>();
+        moves.AddRange(AddMovesNorth(position, colour, true));
+        moves.AddRange(AddMovesEast(position, colour, true));
+        moves.AddRange(AddMovesSouth(position, colour, true));
+        moves.AddRange(AddMovesWest(position, colour, true));
+        return moves;
     }
 
     private IEnumerable<Move> GetQueenMoves(Position position, Colour colour)
