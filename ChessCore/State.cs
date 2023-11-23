@@ -119,29 +119,38 @@ public class State
         return moves;
     }
 
+    private static readonly RankAndFileChange North = new(1, 0);
+    private static readonly RankAndFileChange NorthEast = new(1, 1);
+    private static readonly RankAndFileChange East = new(0, 1);
+    private static readonly RankAndFileChange SouthEast = new(-1, 1);
+    private static readonly RankAndFileChange South = new(-1, 0);
+    private static readonly RankAndFileChange SouthWest = new(-1, -1);
+    private static readonly RankAndFileChange West = new(0, -1);
+    private static readonly RankAndFileChange NorthWest = new(1, -1);
+
     private IEnumerable<Move> AddMovesNorth(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(1, 0), colour, iterate);
+        AddMoveAfterPositionChange(position, North, colour, iterate);
 
     private IEnumerable<Move> AddMovesNorthEast(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(1, 1), colour, iterate);
+        AddMoveAfterPositionChange(position, NorthEast, colour, iterate);
 
     private IEnumerable<Move> AddMovesEast(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(0, 1), colour, iterate);
+        AddMoveAfterPositionChange(position, East, colour, iterate);
 
     private IEnumerable<Move> AddMovesSouthEast(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(-1, 1), colour, iterate);
+        AddMoveAfterPositionChange(position, SouthEast, colour, iterate);
 
     private IEnumerable<Move> AddMovesSouth(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(-1, 0), colour, iterate);
+        AddMoveAfterPositionChange(position, South, colour, iterate);
 
     private IEnumerable<Move> AddMovesSouthWest(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(-1, -1), colour, iterate);
+        AddMoveAfterPositionChange(position, SouthWest, colour, iterate);
 
     private IEnumerable<Move> AddMovesWest(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(0, -1), colour, iterate);
+        AddMoveAfterPositionChange(position, West, colour, iterate);
 
     private IEnumerable<Move> AddMovesNorthWest(Position position, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(position, new RankAndFileChange(1, -1), colour, iterate);
+        AddMoveAfterPositionChange(position, NorthWest, colour, iterate);
 
     private IEnumerable<Move> AddMoveAfterPositionChange(Position position, RankAndFileChange change, Colour colour, bool iterate)
     {
