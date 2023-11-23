@@ -19,9 +19,11 @@ public class State
                 {
                     PieceType.Pawn => GetPawnMoves(position, colour),
                     PieceType.Bishop => GetBishopMoves(position, colour),
+                    PieceType.Knight => GetKnightMoves(position, colour),
                     PieceType.Rook => GetRookMoves(position, colour),
                     PieceType.Queen => GetQueenMoves(position, colour),
-                    PieceType.King => GetKingMoves(position, colour)
+                    PieceType.King => GetKingMoves(position, colour),
+                    _ => throw new Exception($"Unknown piece type {piece.Type}")
                 });
 
         return moves;
@@ -81,6 +83,20 @@ public class State
         return moves;
     }
 
+    private IEnumerable<Move> GetKnightMoves(Position position, Colour colour)
+    {
+        var moves = new List<Move>();
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightNorthEast, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightNorthWest, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightEastNorth, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightEastSouth, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightSouthEast, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightSouthWest, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightWestSouth, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(position, KnightWestNorth, colour, false));
+        return moves;
+    }
+
     private IEnumerable<Move> GetRookMoves(Position position, Colour colour)
     {
         var moves = new List<Move>();
@@ -127,6 +143,15 @@ public class State
     private static readonly RankAndFileChange SouthWest = new(-1, -1);
     private static readonly RankAndFileChange West = new(0, -1);
     private static readonly RankAndFileChange NorthWest = new(1, -1);
+
+    private static readonly RankAndFileChange KnightNorthEast = new(2, -1);
+    private static readonly RankAndFileChange KnightNorthWest = new(2, 1);
+    private static readonly RankAndFileChange KnightEastNorth = new(1, 2);
+    private static readonly RankAndFileChange KnightEastSouth = new(-1, 2);
+    private static readonly RankAndFileChange KnightSouthEast = new(-2, 1);
+    private static readonly RankAndFileChange KnightSouthWest = new(-2, -1);
+    private static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
+    private static readonly RankAndFileChange KnightWestNorth = new(1, -2);
 
     private IEnumerable<Move> AddMovesNorth(Position position, Colour colour, bool iterate) =>
         AddMoveAfterPositionChange(position, North, colour, iterate);
