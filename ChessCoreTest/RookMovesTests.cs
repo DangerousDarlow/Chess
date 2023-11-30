@@ -26,10 +26,10 @@ public class RookMovesTests
             new(d4, d1),
             new(d4, c4),
             new(d4, b4),
-            new(d4, a4),
+            new(d4, a4)
         }, moves);
     }
-    
+
     [Test]
     public void Rook_can_capture_horizontally_and_vertically()
     {

@@ -2,6 +2,24 @@
 
 public class State
 {
+    private static readonly RankAndFileChange North = new(1, 0);
+    private static readonly RankAndFileChange NorthEast = new(1, 1);
+    private static readonly RankAndFileChange East = new(0, 1);
+    private static readonly RankAndFileChange SouthEast = new(-1, 1);
+    private static readonly RankAndFileChange South = new(-1, 0);
+    private static readonly RankAndFileChange SouthWest = new(-1, -1);
+    private static readonly RankAndFileChange West = new(0, -1);
+    private static readonly RankAndFileChange NorthWest = new(1, -1);
+
+    private static readonly RankAndFileChange KnightNorthEast = new(2, -1);
+    private static readonly RankAndFileChange KnightNorthWest = new(2, 1);
+    private static readonly RankAndFileChange KnightEastNorth = new(1, 2);
+    private static readonly RankAndFileChange KnightEastSouth = new(-1, 2);
+    private static readonly RankAndFileChange KnightSouthEast = new(-2, 1);
+    private static readonly RankAndFileChange KnightSouthWest = new(-2, -1);
+    private static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
+    private static readonly RankAndFileChange KnightWestNorth = new(1, -2);
+
     public State(Board board)
     {
         Board = board;
@@ -134,24 +152,6 @@ public class State
         moves.AddRange(AddMovesNorthWest(position, colour, false));
         return moves;
     }
-
-    private static readonly RankAndFileChange North = new(1, 0);
-    private static readonly RankAndFileChange NorthEast = new(1, 1);
-    private static readonly RankAndFileChange East = new(0, 1);
-    private static readonly RankAndFileChange SouthEast = new(-1, 1);
-    private static readonly RankAndFileChange South = new(-1, 0);
-    private static readonly RankAndFileChange SouthWest = new(-1, -1);
-    private static readonly RankAndFileChange West = new(0, -1);
-    private static readonly RankAndFileChange NorthWest = new(1, -1);
-
-    private static readonly RankAndFileChange KnightNorthEast = new(2, -1);
-    private static readonly RankAndFileChange KnightNorthWest = new(2, 1);
-    private static readonly RankAndFileChange KnightEastNorth = new(1, 2);
-    private static readonly RankAndFileChange KnightEastSouth = new(-1, 2);
-    private static readonly RankAndFileChange KnightSouthEast = new(-2, 1);
-    private static readonly RankAndFileChange KnightSouthWest = new(-2, -1);
-    private static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
-    private static readonly RankAndFileChange KnightWestNorth = new(1, -2);
 
     private IEnumerable<Move> AddMovesNorth(Position position, Colour colour, bool iterate) =>
         AddMoveAfterPositionChange(position, North, colour, iterate);

@@ -23,7 +23,7 @@ public class KingMovesTests
             new(d4, c5)
         }, moves);
     }
-    
+
     [Test]
     public void King_can_capture_in_eight_directions()
     {
@@ -42,7 +42,7 @@ public class KingMovesTests
             new(d4, c5, MoveType.Capture)
         }, moves);
     }
-    
+
     [Test]
     public void King_cannot_capture_own_colour()
     {
