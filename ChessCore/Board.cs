@@ -79,7 +79,7 @@ public class Board
     {
         var piece = this[move.From];
         if (piece == null)
-            throw new Exception($"Invalid move {move}; No piece");
+            throw new Exception($"Invalid {move}; No piece");
 
         this[move.To] = piece;
         this[move.From] = null;

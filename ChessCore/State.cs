@@ -1,6 +1,6 @@
 ﻿namespace ChessCore;
 
-public class State
+public class State(Board board)
 {
     private static readonly RankAndFileChange North = new(1, 0);
     private static readonly RankAndFileChange NorthEast = new(1, 1);
@@ -20,15 +20,7 @@ public class State
     private static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
     private static readonly RankAndFileChange KnightWestNorth = new(1, -2);
 
-    public State(Board board, Move? previousMove = null)
-    {
-        Board = board;
-        PreviousMove = previousMove;
-    }
-
-    private Board Board { get; }
-
-    private Move? PreviousMove { get; }
+    private Board Board { get; } = board;
 
     public List<Move> GetMovesForColour(Colour colour)
     {
@@ -76,49 +68,24 @@ public class State
         }
 
         // Capture left
-        AddPawnCaptureMove(positionFrom, colour, (byte) (fileFrom - 1), rankTo, rankFrom, moves);
+        AddPawnCaptureMove(positionFrom, colour, (byte) (fileFrom - 1), rankTo, moves);
 
         // Capture right
-        AddPawnCaptureMove(positionFrom, colour, (byte) (fileFrom + 1), rankTo, rankFrom, moves);
+        AddPawnCaptureMove(positionFrom, colour, (byte) (fileFrom + 1), rankTo, moves);
 
         return moves;
     }
 
-    private void AddPawnCaptureMove(Position positionFrom, Colour colour, byte fileTo, byte rankTo, byte rankFrom, ICollection<Move> moves)
+    private void AddPawnCaptureMove(Position positionFrom, Colour colour, byte fileTo, byte rankTo, List<Move> moves)
     {
         if (!Board.IsRankOrFileInBounds(fileTo)) return;
 
-        var endPositionOfCapturingPiece = Board.PositionFromRankAndFile(rankTo, fileTo);
-        var pieceCaptured = Board[endPositionOfCapturingPiece];
+        var positionTo = Board.PositionFromRankAndFile(rankTo, fileTo);
+        var pieceCaptured = Board[positionTo];
         if (pieceCaptured is not null && pieceCaptured.Colour != colour)
-        {
-            moves.Add(new Move(positionFrom, endPositionOfCapturingPiece, MoveType.Capture));
-
-            // If a capture can be performed then en passant can't be performed
-            return;
-        }
-
-        // En passant from here on
-
-        // En passant can only be to rank 6 for white and rank 3 for black
-        var endRankOfPositionCapturingEnPassant = (byte) (colour == Colour.White ? 6 : 3);
-        if (rankTo != endRankOfPositionCapturingEnPassant) return;
-
-        // Position of opponent's pawn for en passant capture. This isn't the end position of the en passant move.
-        var positionOfEnPassantTarget = Board.PositionFromRankAndFile(rankFrom, fileTo);
-
-        var pieceEnPassantCaptured = Board[positionOfEnPassantTarget];
-
-        // En passant can only capture an opponent's pawn
-        if (pieceEnPassantCaptured is null || pieceEnPassantCaptured.Colour == colour || pieceEnPassantCaptured.Type != PieceType.Pawn) return;
-
-        // Rank the en passant target pawn made a double advance from
-        var startRankOfEnPassantTarget = (byte) (colour == Colour.White ? 7 : 2);
-
-        var opponentDoubleAdvance = new Move(Board.PositionFromRankAndFile(startRankOfEnPassantTarget, fileTo), positionOfEnPassantTarget);
-        if (PreviousMove != opponentDoubleAdvance) return;
-
-        moves.Add(new Move(positionFrom, endPositionOfCapturingPiece, MoveType.EnPassant));
+            moves.Add(new Move(positionFrom, positionTo, MoveType.Capture));
+        else if (positionTo == Board.EnPassantTarget)
+            moves.Add(new Move(positionFrom, positionTo, MoveType.EnPassant));
     }
 
     private IEnumerable<Move> GetBishopMoves(Position position, Colour colour)

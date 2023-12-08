@@ -92,13 +92,13 @@ public class PawnMovesTests
             new(c3, c4)
         }, moves);
     }
-    
+
     [Test]
     public void White_pawn_can_capture_en_passant()
     {
-        var state = new State(
-            Board.CreateFromForsythEdwardsNotation("8/8/5p2/3pP3/8/8/8/8 w - - 0 1"),
-            new Move(d7, d5));
+        var board = Board.CreateFromForsythEdwardsNotation("8/3p4/5p2/4P3/8/8/8/8 w - - 0 1");
+        board.ApplyMove(new Move(d7, d5, MoveType.DoublePawnAdvance));
+        var state = new State(board);
 
         var moves = state.GetMovesForColour(Colour.White);
 
@@ -109,29 +109,29 @@ public class PawnMovesTests
             new(e5, d6, MoveType.EnPassant)
         }, moves);
     }
-    
+
     [Test]
     public void Pawn_cannot_capture_en_passant_if_previous_move_was_not_double_advance()
     {
-        var state = new State(
-            Board.CreateFromForsythEdwardsNotation("8/8/5p2/3pP3/8/8/8/8 w - - 0 1"),
-            new Move(f7, f6));
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/3p1p2/4P3/8/8/8/8 w - - 0 1");
+        board.ApplyMove(new Move(d6, d5));
+        var state = new State(board);
 
         var moves = state.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
             new(e5, e6),
-            new(e5, f6, MoveType.Capture),
+            new(e5, f6, MoveType.Capture)
         }, moves);
     }
 
     [Test]
     public void Black_pawn_can_capture_en_passant()
     {
-        var state = new State(
-            Board.CreateFromForsythEdwardsNotation("8/8/8/8/pPp5/8/8/8 w - - 0 1"),
-            new Move(b2, b4));
+        var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/p1p5/8/1P6/8 b - - 0 1");
+        board.ApplyMove(new Move(b2, b4, MoveType.DoublePawnAdvance));
+        var state = new State(board);
 
         var moves = state.GetMovesForColour(Colour.Black);
 
