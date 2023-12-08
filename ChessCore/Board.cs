@@ -18,7 +18,7 @@ public class Board
 
     private Board(string fen)
     {
-        FromForsythEdwardsNotation(fen);
+        InitialiseFromForsythEdwardsNotation(fen);
     }
 
     private Board()
@@ -59,6 +59,8 @@ public class Board
 
     public bool WhiteTurn { get; private set; } = true;
 
+    public Position? EnPassantTarget { get; private set; }
+
     public ushort FullMoveNumber { get; private set; } = 1;
 
     public ushort HalfMoveClock { get; private set; }
@@ -77,6 +79,21 @@ public class Board
     {
         this[move.To] = this[move.From];
         this[move.From] = null;
+
+        WhiteTurn = !WhiteTurn;
+
+        if (move.Type == MoveType.DoublePawnAdvance)
+        {
+            var (rankFrom, fileFrom) = RankAndFileFromPosition(move.From);
+            var (rankTo, _) = RankAndFileFromPosition(move.To);
+            var rank = rankTo > rankFrom ? (byte) (rankFrom + 1) : (byte) (rankFrom - 1);
+            EnPassantTarget = PositionFromRankAndFile(rank, fileFrom);
+        }
+        else
+            EnPassantTarget = null;
+
+        if (WhiteTurn)
+            ++FullMoveNumber;
     }
 
     public IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour)
@@ -128,11 +145,18 @@ public class Board
 
         var activeColour = WhiteTurn ? Colour.White : Colour.Black;
         var colourChar = activeColour.ToString().ToLower().First();
-        stringBuilder.Append($" {colourChar} KQkq - {HalfMoveClock} {FullMoveNumber}");
+        var enPassantTarget = EnPassantTarget == null ? "-" : EnPassantTarget.ToString();
+        stringBuilder.Append($" {colourChar} KQkq {enPassantTarget} {HalfMoveClock} {FullMoveNumber}");
         return stringBuilder.ToString();
     }
 
-    private void FromForsythEdwardsNotation(string fen)
+    /// <summary>
+    /// Initialise the board from a FEN string
+    ///
+    /// This function must not be made public with it's current implementation.
+    /// It assumes the board is uninitialized. It does not overwrite any existing state.
+    /// </summary>
+    private void InitialiseFromForsythEdwardsNotation(string fen)
     {
         var parts = fen.Split(' ');
 
@@ -166,6 +190,10 @@ public class Board
             "b" => false,
             _ => throw new ArgumentException($"Invalid colour {colour}")
         };
+
+        var enPassantTarget = parts[3];
+        if (enPassantTarget != "-")
+            EnPassantTarget = Enum.Parse<Position>(enPassantTarget);
 
         var halfMoveClock = parts[4];
         HalfMoveClock = ushort.Parse(halfMoveClock);

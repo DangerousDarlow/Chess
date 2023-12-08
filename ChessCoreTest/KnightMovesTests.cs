@@ -72,8 +72,8 @@ public class KnightMovesTests
             new(b3, b4),
             new(b5, b6),
             new(c6, c7),
-            new(e2, e4),
-            new(c2, c4)
+            new(e2, e4, MoveType.DoublePawnAdvance),
+            new(c2, c4, MoveType.DoublePawnAdvance)
         }, moves);
     }
 }

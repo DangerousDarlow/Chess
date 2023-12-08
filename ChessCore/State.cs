@@ -71,7 +71,7 @@ public class State
                 var rankToDoubleAdvance = (byte) (colour == Colour.White ? rankFrom + 2 : rankFrom - 2);
                 var positionToDoubleAdvance = Board.PositionFromRankAndFile(rankToDoubleAdvance, fileFrom);
                 if (Board[positionToDoubleAdvance] is null)
-                    moves.Add(new Move(positionFrom, positionToDoubleAdvance));
+                    moves.Add(new Move(positionFrom, positionToDoubleAdvance, MoveType.DoublePawnAdvance));
             }
         }
 

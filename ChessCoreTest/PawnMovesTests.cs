@@ -26,7 +26,7 @@ public class PawnMovesTests
         CollectionAssert.AreEquivalent(new List<Move>
         {
             new(a2, a3),
-            new(a2, a4)
+            new(a2, a4, MoveType.DoublePawnAdvance)
         }, moves);
     }
 

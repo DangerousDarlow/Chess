@@ -13,6 +13,10 @@ public class BoardTests
     [Test]
     public void Board_can_be_created_and_setup_for_new_game() => AssertSetupForNewGame(_board);
 
+    [Test]
+    public void Board_can_be_created_and_setup_from_new_game_forsyth_edwards_notation() =>
+        AssertSetupForNewGame(Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+
     private static void AssertSetupForNewGame(Board board)
     {
         Assert.That(board[a1], Is.EqualTo(Piece.WhiteRook));
@@ -55,10 +59,6 @@ public class BoardTests
     }
 
     [Test]
-    public void Board_can_be_created_and_setup_from_new_game_forsyth_edwards_notation() =>
-        AssertSetupForNewGame(Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
-
-    [Test]
     public void Forsyth_Edwards_Notation_is_correct_for_new_game_state() =>
         Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
 
@@ -87,6 +87,24 @@ public class BoardTests
         var blackPieces = _board.PiecesOfColour(Colour.Black).ToList();
         Assert.That(blackPieces, Has.Count.EqualTo(16));
         Assert.That(blackPieces, Has.Exactly(1).Matches<(Position position, Piece piece)>(x => x.position == h8 && x.piece == Piece.BlackRook));
+    }
+
+    [Test]
+    public void En_passant_target_position_is_set_after_pawn_double_advance()
+    {
+        _board.ApplyMove(new Move(e2, e4, MoveType.DoublePawnAdvance));
+        Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"));
+
+        _board.ApplyMove(new Move(e7, e5, MoveType.DoublePawnAdvance));
+        Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2"));
+    }
+
+    [Test]
+    public void En_passant_target_position_is_cleared_after_non_pawn_double_advance()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
+        board.ApplyMove(new Move(b8, c6));
+        Assert.That(board.ToForsythEdwardsNotation(), Is.EqualTo("r1bqkbnr/pppppppp/2n5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"));
     }
 
     [Test]

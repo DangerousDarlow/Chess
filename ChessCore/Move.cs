@@ -8,6 +8,7 @@ public record Move(Position From, Position To, MoveType Type = MoveType.Move)
 public enum MoveType : byte
 {
     Move,
+    DoublePawnAdvance,
     Capture,
     EnPassant,
     Castle
