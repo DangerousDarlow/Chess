@@ -115,7 +115,7 @@ public class BoardTests
         _board.ApplyMove(new Move(f1, d3));
         Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkb1r/pppppppp/5n2/8/4P3/3B4/PPPP1PPP/RNBQK1NR b KQkq - 2 2"));
     }
-    
+
     [Test]
     public void Half_move_clock_reset_by_pawn_move()
     {
@@ -123,7 +123,7 @@ public class BoardTests
         board.ApplyMove(new Move(c7, c6));
         Assert.That(board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkb1r/pp1ppppp/2p2n2/8/4P3/3B4/PPPP1PPP/RNBQK1NR w KQkq - 0 3"));
     }
-    
+
     [Test]
     public void Half_move_clock_reset_by_capture()
     {

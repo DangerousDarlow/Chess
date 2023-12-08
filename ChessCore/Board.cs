@@ -94,7 +94,9 @@ public class Board
             EnPassantTarget = PositionFromRankAndFile(rank, fileFrom);
         }
         else
+        {
             EnPassantTarget = null;
+        }
 
         if (move.Type == MoveType.Capture || piece.Type == PieceType.Pawn)
             HalfMoveClock = 0;
@@ -160,10 +162,10 @@ public class Board
     }
 
     /// <summary>
-    /// Initialise the board from a FEN string
+    ///     Initialise the board from a FEN string
     ///
-    /// This function must not be made public with it's current implementation.
-    /// It assumes the board is uninitialized. It does not overwrite any existing state.
+    ///     This function must not be made public with it's current implementation.
+    ///     It assumes the board is uninitialized. It does not overwrite any existing state.
     /// </summary>
     private void InitialiseFromForsythEdwardsNotation(string fen)
     {
