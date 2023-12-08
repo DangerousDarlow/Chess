@@ -104,7 +104,32 @@ public class BoardTests
     {
         var board = Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
         board.ApplyMove(new Move(b8, c6));
-        Assert.That(board.ToForsythEdwardsNotation(), Is.EqualTo("r1bqkbnr/pppppppp/2n5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"));
+        Assert.That(board.ToForsythEdwardsNotation(), Is.EqualTo("r1bqkbnr/pppppppp/2n5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 1 2"));
+    }
+
+    [Test]
+    public void Half_move_clock_increments_every_non_pawn_move()
+    {
+        _board.ApplyMove(new Move(e2, e4));
+        _board.ApplyMove(new Move(g8, f6));
+        _board.ApplyMove(new Move(f1, d3));
+        Assert.That(_board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkb1r/pppppppp/5n2/8/4P3/3B4/PPPP1PPP/RNBQK1NR b KQkq - 2 2"));
+    }
+    
+    [Test]
+    public void Half_move_clock_reset_by_pawn_move()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkb1r/pppppppp/5n2/8/4P3/3B4/PPPP1PPP/RNBQK1NR b KQkq - 2 2");
+        board.ApplyMove(new Move(c7, c6));
+        Assert.That(board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkb1r/pp1ppppp/2p2n2/8/4P3/3B4/PPPP1PPP/RNBQK1NR w KQkq - 0 3"));
+    }
+    
+    [Test]
+    public void Half_move_clock_reset_by_capture()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkb1r/pppppppp/5n2/8/4P3/3B4/PPPP1PPP/RNBQK1NR b KQkq - 2 2");
+        board.ApplyMove(new Move(f6, e4, MoveType.Capture));
+        Assert.That(board.ToForsythEdwardsNotation(), Is.EqualTo("rnbqkb1r/pppppppp/8/8/4n3/3B4/PPPP1PPP/RNBQK1NR w KQkq - 0 3"));
     }
 
     [Test]

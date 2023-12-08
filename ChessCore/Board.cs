@@ -77,7 +77,11 @@ public class Board
 
     public void ApplyMove(Move move)
     {
-        this[move.To] = this[move.From];
+        var piece = this[move.From];
+        if (piece == null)
+            throw new Exception($"Invalid move {move}; No piece");
+
+        this[move.To] = piece;
         this[move.From] = null;
 
         WhiteTurn = !WhiteTurn;
@@ -91,6 +95,11 @@ public class Board
         }
         else
             EnPassantTarget = null;
+
+        if (move.Type == MoveType.Capture || piece.Type == PieceType.Pawn)
+            HalfMoveClock = 0;
+        else
+            ++HalfMoveClock;
 
         if (WhiteTurn)
             ++FullMoveNumber;
