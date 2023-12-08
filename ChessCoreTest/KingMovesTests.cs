@@ -8,8 +8,8 @@ public class KingMovesTests
     [Test]
     public void King_can_move_in_eight_directions()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3K4/8/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3K4/8/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -27,8 +27,8 @@ public class KingMovesTests
     [Test]
     public void King_can_capture_in_eight_directions()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/2ppp3/2pKp3/2ppp3/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/2ppp3/2pKp3/2ppp3/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -46,8 +46,8 @@ public class KingMovesTests
     [Test]
     public void King_cannot_capture_own_colour()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/2PPP3/2PKP3/2PPP3/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/2PPP3/2PKP3/2PPP3/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {

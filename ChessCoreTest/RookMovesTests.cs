@@ -8,8 +8,8 @@ public class RookMovesTests
     [Test]
     public void Rook_can_move_horizontally_and_vertically()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3R4/8/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3R4/8/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -33,8 +33,8 @@ public class RookMovesTests
     [Test]
     public void Rook_can_capture_horizontally_and_vertically()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/3p4/2pRp3/3p4/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/3p4/2pRp3/3p4/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -48,8 +48,8 @@ public class RookMovesTests
     [Test]
     public void Rook_cannot_capture_own_colour()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/3P4/2PRP3/3P4/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/3P4/2PRP3/3P4/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {

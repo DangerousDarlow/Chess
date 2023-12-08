@@ -8,8 +8,8 @@ public class BishopMovesTests
     [Test]
     public void Bishop_can_move_diagonally()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3B4/8/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3B4/8/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -32,8 +32,8 @@ public class BishopMovesTests
     [Test]
     public void Bishop_can_capture_diagonally()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/2ppp3/2pBp3/2ppp3/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/2ppp3/2pBp3/2ppp3/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -47,8 +47,8 @@ public class BishopMovesTests
     [Test]
     public void Bishop_cannot_capture_own_colour()
     {
-        var state = new State(Board.CreateFromForsythEdwardsNotation("8/8/8/2PPP3/2PBP3/2PPP3/8/8 w - - 0 1"));
-        var moves = state.GetMovesForColour(Colour.White);
+        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/2PPP3/2PBP3/2PPP3/8/8 w - - 0 1"));
+        var moves = moveCalculator.GetMovesForColour(Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
