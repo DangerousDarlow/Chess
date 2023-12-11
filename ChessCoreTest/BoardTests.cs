@@ -53,7 +53,11 @@ public class BoardTests
         Assert.That(board[g8], Is.EqualTo(Piece.BlackKnight));
         Assert.That(board[h8], Is.EqualTo(Piece.BlackRook));
 
-        Assert.That(board.WhiteTurn, Is.True);
+        Assert.That(board.IsWhiteTurn, Is.True);
+        Assert.That(board.IsWhiteKingsideCastleAvailable, Is.True);
+        Assert.That(board.IsWhiteQueensideCastleAvailable, Is.True);
+        Assert.That(board.IsBlackKingsideCastleAvailable, Is.True);
+        Assert.That(board.IsBlackQueensideCastleAvailable, Is.True);
         Assert.That(board.FullMoveNumber, Is.EqualTo(1));
         Assert.That(board.HalfMoveClock, Is.EqualTo(0));
     }
@@ -87,6 +91,34 @@ public class BoardTests
         var blackPieces = _board.PiecesOfColour(Colour.Black).ToList();
         Assert.That(blackPieces, Has.Count.EqualTo(16));
         Assert.That(blackPieces, Has.Exactly(1).Matches<(Position position, Piece piece)>(x => x.position == h8 && x.piece == Piece.BlackRook));
+    }
+
+    [Test]
+    public void White_king_side_castling_availability_is_initialised_from_fen()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Qkq - 0 1");
+        Assert.That(board.IsWhiteKingsideCastleAvailable, Is.False);
+    }
+
+    [Test]
+    public void White_queen_side_castling_availability_is_initialised_from_fen()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kkq - 0 1");
+        Assert.That(board.IsWhiteQueensideCastleAvailable, Is.False);
+    }
+
+    [Test]
+    public void Black_king_side_castling_availability_is_initialised_from_fen()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQq - 0 1");
+        Assert.That(board.IsBlackKingsideCastleAvailable, Is.False);
+    }
+
+    [Test]
+    public void Black_queen_side_castling_availability_is_initialised_from_fen()
+    {
+        var board = Board.CreateFromForsythEdwardsNotation("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQk - 0 1");
+        Assert.That(board.IsBlackQueensideCastleAvailable, Is.False);
     }
 
     [Test]

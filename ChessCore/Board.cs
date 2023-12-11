@@ -16,6 +16,8 @@ public class Board
     /// </summary>
     private readonly PieceTypeInternal[] _board = new PieceTypeInternal[IndexSize];
 
+    private readonly BitVector8 _flags = new();
+
     private Board(string fen)
     {
         InitialiseFromForsythEdwardsNotation(fen);
@@ -55,9 +57,43 @@ public class Board
         this[f8] = Piece.BlackBishop;
         this[g8] = Piece.BlackKnight;
         this[h8] = Piece.BlackRook;
+
+        IsWhiteTurn = true;
+        IsWhiteKingsideCastleAvailable = true;
+        IsWhiteQueensideCastleAvailable = true;
+        IsBlackKingsideCastleAvailable = true;
+        IsBlackQueensideCastleAvailable = true;
     }
 
-    public bool WhiteTurn { get; private set; } = true;
+    public bool IsWhiteTurn
+    {
+        get => _flags[0];
+        private set => _flags[0] = value;
+    }
+
+    public bool IsWhiteKingsideCastleAvailable
+    {
+        get => _flags[1];
+        private set => _flags[1] = value;
+    }
+
+    public bool IsWhiteQueensideCastleAvailable
+    {
+        get => _flags[2];
+        private set => _flags[2] = value;
+    }
+
+    public bool IsBlackKingsideCastleAvailable
+    {
+        get => _flags[3];
+        private set => _flags[3] = value;
+    }
+
+    public bool IsBlackQueensideCastleAvailable
+    {
+        get => _flags[4];
+        private set => _flags[4] = value;
+    }
 
     public Position? EnPassantTarget { get; private set; }
 
@@ -84,7 +120,7 @@ public class Board
         this[move.To] = piece;
         this[move.From] = null;
 
-        WhiteTurn = !WhiteTurn;
+        IsWhiteTurn = !IsWhiteTurn;
 
         if (move.Type == MoveType.DoublePawnAdvance)
         {
@@ -103,7 +139,7 @@ public class Board
         else
             ++HalfMoveClock;
 
-        if (WhiteTurn)
+        if (IsWhiteTurn)
             ++FullMoveNumber;
     }
 
@@ -154,10 +190,24 @@ public class Board
                 stringBuilder.Append('/');
         }
 
-        var activeColour = WhiteTurn ? Colour.White : Colour.Black;
+        var activeColour = IsWhiteTurn ? Colour.White : Colour.Black;
         var colourChar = activeColour.ToString().ToLower().First();
+        stringBuilder.Append($" {colourChar} ");
+
+        if (IsWhiteKingsideCastleAvailable)
+            stringBuilder.Append('K');
+
+        if (IsWhiteQueensideCastleAvailable)
+            stringBuilder.Append('Q');
+
+        if (IsBlackKingsideCastleAvailable)
+            stringBuilder.Append('k');
+
+        if (IsBlackQueensideCastleAvailable)
+            stringBuilder.Append('q');
+
         var enPassantTarget = EnPassantTarget == null ? "-" : EnPassantTarget.ToString();
-        stringBuilder.Append($" {colourChar} KQkq {enPassantTarget} {HalfMoveClock} {FullMoveNumber}");
+        stringBuilder.Append($" {enPassantTarget} {HalfMoveClock} {FullMoveNumber}");
         return stringBuilder.ToString();
     }
 
@@ -195,12 +245,18 @@ public class Board
         }
 
         var colour = parts[1];
-        WhiteTurn = colour switch
+        IsWhiteTurn = colour switch
         {
             "w" => true,
             "b" => false,
             _ => throw new ArgumentException($"Invalid colour {colour}")
         };
+
+        var castlingAvailability = parts[2];
+        IsWhiteKingsideCastleAvailable = castlingAvailability.Contains('K');
+        IsWhiteQueensideCastleAvailable = castlingAvailability.Contains('Q');
+        IsBlackKingsideCastleAvailable = castlingAvailability.Contains('k');
+        IsBlackQueensideCastleAvailable = castlingAvailability.Contains('q');
 
         var enPassantTarget = parts[3];
         if (enPassantTarget != "-")
