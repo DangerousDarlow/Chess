@@ -2,10 +2,10 @@
 
 public interface IMoveCalculator
 {
-    List<Move> GetMovesForColour(Colour colour);
+    List<Move> GetMovesForColour(IBoard board, Colour colour);
 }
 
-public class MoveCalculator(IBoard board) : IMoveCalculator
+public class MoveCalculator : IMoveCalculator
 {
     private static readonly RankAndFileChange North = new(1, 0);
     private static readonly RankAndFileChange NorthEast = new(1, 1);
@@ -25,40 +25,38 @@ public class MoveCalculator(IBoard board) : IMoveCalculator
     private static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
     private static readonly RankAndFileChange KnightWestNorth = new(1, -2);
 
-    private IBoard Board { get; } = board;
-
-    public List<Move> GetMovesForColour(Colour colour)
+    public List<Move> GetMovesForColour(IBoard board, Colour colour)
     {
         var moves = new List<Move>();
 
-        foreach (var (positionFrom, piece) in Board.PiecesOfColour(colour))
+        foreach (var (positionFrom, piece) in board.PiecesOfColour(colour))
             moves.AddRange(
                 piece.Type switch
                 {
-                    PieceType.Pawn => GetPawnMoves(positionFrom, colour),
-                    PieceType.Bishop => GetBishopMoves(positionFrom, colour),
-                    PieceType.Knight => GetKnightMoves(positionFrom, colour),
-                    PieceType.Rook => GetRookMoves(positionFrom, colour),
-                    PieceType.Queen => GetQueenMoves(positionFrom, colour),
-                    PieceType.King => GetKingMoves(positionFrom, colour),
+                    PieceType.Pawn => GetPawnMoves(positionFrom, board, colour),
+                    PieceType.Bishop => GetBishopMoves(positionFrom, board, colour),
+                    PieceType.Knight => GetKnightMoves(positionFrom, board, colour),
+                    PieceType.Rook => GetRookMoves(positionFrom, board, colour),
+                    PieceType.Queen => GetQueenMoves(positionFrom, board, colour),
+                    PieceType.King => GetKingMoves(positionFrom, board, colour),
                     _ => throw new Exception($"Unknown piece type {piece.Type}")
                 });
 
         return moves;
     }
 
-    private IEnumerable<Move> GetPawnMoves(Position positionFrom, Colour colour)
+    private IEnumerable<Move> GetPawnMoves(Position positionFrom, IBoard board, Colour colour)
     {
-        var (rankFrom, fileFrom) = ChessCore.Board.RankAndFileFromPosition(positionFrom);
+        var (rankFrom, fileFrom) = Board.RankAndFileFromPosition(positionFrom);
 
         var rankTo = (byte) (colour == Colour.White ? rankFrom + 1 : rankFrom - 1);
-        if (ChessCore.Board.IsRankOrFileInBounds(rankTo) is false)
+        if (Board.IsRankOrFileInBounds(rankTo) is false)
             return Enumerable.Empty<Move>();
 
         var moves = new List<Move>();
 
-        var positionTo = ChessCore.Board.PositionFromRankAndFile(rankTo, fileFrom);
-        if (Board[positionTo] is null)
+        var positionTo = Board.PositionFromRankAndFile(rankTo, fileFrom);
+        if (board[positionTo] is null)
         {
             moves.Add(new Move(positionFrom, positionTo));
 
@@ -66,134 +64,134 @@ public class MoveCalculator(IBoard board) : IMoveCalculator
             if ((colour == Colour.White && rankFrom == 2) || (colour == Colour.Black && rankFrom == 7))
             {
                 var rankToDoubleAdvance = (byte) (colour == Colour.White ? rankFrom + 2 : rankFrom - 2);
-                var positionToDoubleAdvance = ChessCore.Board.PositionFromRankAndFile(rankToDoubleAdvance, fileFrom);
-                if (Board[positionToDoubleAdvance] is null)
+                var positionToDoubleAdvance = Board.PositionFromRankAndFile(rankToDoubleAdvance, fileFrom);
+                if (board[positionToDoubleAdvance] is null)
                     moves.Add(new Move(positionFrom, positionToDoubleAdvance, MoveType.DoublePawnAdvance));
             }
         }
 
         // Capture left
-        AddPawnCaptureMove(positionFrom, colour, (byte) (fileFrom - 1), rankTo, moves);
+        AddPawnCaptureMove(positionFrom, board, colour, (byte) (fileFrom - 1), rankTo, moves);
 
         // Capture right
-        AddPawnCaptureMove(positionFrom, colour, (byte) (fileFrom + 1), rankTo, moves);
+        AddPawnCaptureMove(positionFrom, board, colour, (byte) (fileFrom + 1), rankTo, moves);
 
         return moves;
     }
 
-    private void AddPawnCaptureMove(Position positionFrom, Colour colour, byte fileTo, byte rankTo, List<Move> moves)
+    private void AddPawnCaptureMove(Position positionFrom, IBoard board, Colour colour, byte fileTo, byte rankTo, List<Move> moves)
     {
-        if (!ChessCore.Board.IsRankOrFileInBounds(fileTo)) return;
+        if (!Board.IsRankOrFileInBounds(fileTo)) return;
 
-        var positionTo = ChessCore.Board.PositionFromRankAndFile(rankTo, fileTo);
-        var pieceCaptured = Board[positionTo];
+        var positionTo = Board.PositionFromRankAndFile(rankTo, fileTo);
+        var pieceCaptured = board[positionTo];
         if (pieceCaptured is not null && pieceCaptured.Colour != colour)
             moves.Add(new Move(positionFrom, positionTo, MoveType.Capture));
-        else if (positionTo == Board.EnPassantTarget)
+        else if (positionTo == board.EnPassantTarget)
             moves.Add(new Move(positionFrom, positionTo, MoveType.EnPassant));
     }
 
-    private IEnumerable<Move> GetBishopMoves(Position positionFrom, Colour colour)
+    private IEnumerable<Move> GetBishopMoves(Position positionFrom, IBoard board, Colour colour)
     {
         var moves = new List<Move>();
-        moves.AddRange(AddMovesNorthEast(positionFrom, colour, true));
-        moves.AddRange(AddMovesSouthEast(positionFrom, colour, true));
-        moves.AddRange(AddMovesSouthWest(positionFrom, colour, true));
-        moves.AddRange(AddMovesNorthWest(positionFrom, colour, true));
+        moves.AddRange(AddMovesNorthEast(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesSouthEast(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesSouthWest(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesNorthWest(positionFrom, board, colour, true));
         return moves;
     }
 
-    private IEnumerable<Move> GetKnightMoves(Position positionFrom, Colour colour)
+    private IEnumerable<Move> GetKnightMoves(Position positionFrom, IBoard board, Colour colour)
     {
         var moves = new List<Move>();
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightNorthEast, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightNorthWest, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightEastNorth, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightEastSouth, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightSouthEast, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightSouthWest, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightWestSouth, colour, false));
-        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightWestNorth, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightNorthEast, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightNorthWest, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightEastNorth, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightEastSouth, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightSouthEast, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightSouthWest, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightWestSouth, board, colour, false));
+        moves.AddRange(AddMoveAfterPositionChange(positionFrom, KnightWestNorth, board, colour, false));
         return moves;
     }
 
-    private IEnumerable<Move> GetRookMoves(Position positionFrom, Colour colour)
+    private IEnumerable<Move> GetRookMoves(Position positionFrom, IBoard board, Colour colour)
     {
         var moves = new List<Move>();
-        moves.AddRange(AddMovesNorth(positionFrom, colour, true));
-        moves.AddRange(AddMovesEast(positionFrom, colour, true));
-        moves.AddRange(AddMovesSouth(positionFrom, colour, true));
-        moves.AddRange(AddMovesWest(positionFrom, colour, true));
+        moves.AddRange(AddMovesNorth(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesEast(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesSouth(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesWest(positionFrom, board, colour, true));
         return moves;
     }
 
-    private IEnumerable<Move> GetQueenMoves(Position positionFrom, Colour colour)
+    private IEnumerable<Move> GetQueenMoves(Position positionFrom, IBoard board, Colour colour)
     {
         var moves = new List<Move>();
-        moves.AddRange(AddMovesNorth(positionFrom, colour, true));
-        moves.AddRange(AddMovesNorthEast(positionFrom, colour, true));
-        moves.AddRange(AddMovesEast(positionFrom, colour, true));
-        moves.AddRange(AddMovesSouthEast(positionFrom, colour, true));
-        moves.AddRange(AddMovesSouth(positionFrom, colour, true));
-        moves.AddRange(AddMovesSouthWest(positionFrom, colour, true));
-        moves.AddRange(AddMovesWest(positionFrom, colour, true));
-        moves.AddRange(AddMovesNorthWest(positionFrom, colour, true));
+        moves.AddRange(AddMovesNorth(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesNorthEast(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesEast(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesSouthEast(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesSouth(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesSouthWest(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesWest(positionFrom, board, colour, true));
+        moves.AddRange(AddMovesNorthWest(positionFrom, board, colour, true));
         return moves;
     }
 
-    private IEnumerable<Move> GetKingMoves(Position positionFrom, Colour colour)
+    private IEnumerable<Move> GetKingMoves(Position positionFrom, IBoard board, Colour colour)
     {
         var moves = new List<Move>();
-        moves.AddRange(AddMovesNorth(positionFrom, colour, false));
-        moves.AddRange(AddMovesNorthEast(positionFrom, colour, false));
-        moves.AddRange(AddMovesEast(positionFrom, colour, false));
-        moves.AddRange(AddMovesSouthEast(positionFrom, colour, false));
-        moves.AddRange(AddMovesSouth(positionFrom, colour, false));
-        moves.AddRange(AddMovesSouthWest(positionFrom, colour, false));
-        moves.AddRange(AddMovesWest(positionFrom, colour, false));
-        moves.AddRange(AddMovesNorthWest(positionFrom, colour, false));
+        moves.AddRange(AddMovesNorth(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesNorthEast(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesEast(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesSouthEast(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesSouth(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesSouthWest(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesWest(positionFrom, board, colour, false));
+        moves.AddRange(AddMovesNorthWest(positionFrom, board, colour, false));
         return moves;
     }
 
-    private IEnumerable<Move> AddMovesNorth(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, North, colour, iterate);
+    private IEnumerable<Move> AddMovesNorth(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, North, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesNorthEast(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, NorthEast, colour, iterate);
+    private IEnumerable<Move> AddMovesNorthEast(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, NorthEast, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesEast(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, East, colour, iterate);
+    private IEnumerable<Move> AddMovesEast(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, East, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesSouthEast(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, SouthEast, colour, iterate);
+    private IEnumerable<Move> AddMovesSouthEast(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, SouthEast, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesSouth(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, South, colour, iterate);
+    private IEnumerable<Move> AddMovesSouth(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, South, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesSouthWest(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, SouthWest, colour, iterate);
+    private IEnumerable<Move> AddMovesSouthWest(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, SouthWest, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesWest(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, West, colour, iterate);
+    private IEnumerable<Move> AddMovesWest(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, West, board, colour, iterate);
 
-    private IEnumerable<Move> AddMovesNorthWest(Position positionFrom, Colour colour, bool iterate) =>
-        AddMoveAfterPositionChange(positionFrom, NorthWest, colour, iterate);
+    private IEnumerable<Move> AddMovesNorthWest(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
+        AddMoveAfterPositionChange(positionFrom, NorthWest, board, colour, iterate);
 
-    private IEnumerable<Move> AddMoveAfterPositionChange(Position positionFrom, RankAndFileChange change, Colour colour, bool iterate)
+    private IEnumerable<Move> AddMoveAfterPositionChange(Position positionFrom, RankAndFileChange change, IBoard board, Colour colour, bool iterate)
     {
         var moves = new List<Move>();
-        var (rank, file) = ChessCore.Board.RankAndFileFromPosition(positionFrom);
+        var (rank, file) = Board.RankAndFileFromPosition(positionFrom);
 
         do
         {
             rank = (byte) (rank + change.RankChange);
             file = (byte) (file + change.FileChange);
 
-            if (ChessCore.Board.IsRankOrFileInBounds(rank) is false || ChessCore.Board.IsRankOrFileInBounds(file) is false)
+            if (Board.IsRankOrFileInBounds(rank) is false || Board.IsRankOrFileInBounds(file) is false)
                 return moves;
 
-            var positionTo = ChessCore.Board.PositionFromRankAndFile(rank, file);
-            var piece = Board[positionTo];
+            var positionTo = Board.PositionFromRankAndFile(rank, file);
+            var piece = board[positionTo];
 
             if (piece is null)
             {

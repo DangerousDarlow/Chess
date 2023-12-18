@@ -3,13 +3,12 @@ using static ChessCore.Position;
 
 namespace ChessCoreTest;
 
-public class KnightMovesTests
+public class KnightMovesTests : MovesTests
 {
     [Test]
     public void Knight_can_move_to_eight_positions()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3N4/8/8/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3N4/8/8/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -27,8 +26,7 @@ public class KnightMovesTests
     [Test]
     public void Knight_cannot_move_off_board()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/N7 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/N7 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -40,8 +38,7 @@ public class KnightMovesTests
     [Test]
     public void Knight_can_capture_eight_positions()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/2p1p3/1p3p2/3N4/1p3p2/2p1p3/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/2p1p3/1p3p2/3N4/1p3p2/2p1p3/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -59,8 +56,7 @@ public class KnightMovesTests
     [Test]
     public void Knight_cannot_capture_own_colour()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/2P1P3/1P3P2/3N4/1P3P2/2P1P3/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/2P1P3/1P3P2/3N4/1P3P2/2P1P3/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {

@@ -3,13 +3,12 @@ using static ChessCore.Position;
 
 namespace ChessCoreTest;
 
-public class QueenMovesTests
+public class QueenMovesTests : MovesTests
 {
     [Test]
     public void Queen_can_move_in_eight_directions()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3Q4/8/8/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/3Q4/8/8/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -46,8 +45,7 @@ public class QueenMovesTests
     [Test]
     public void Queen_can_capture_in_eight_directions()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/2ppp3/2pQp3/2ppp3/8/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/2ppp3/2pQp3/2ppp3/8/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -65,8 +63,7 @@ public class QueenMovesTests
     [Test]
     public void Queen_cannot_capture_own_colour()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/2PPP3/2PQP3/2PPP3/8/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/2PPP3/2PQP3/2PPP3/8/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {

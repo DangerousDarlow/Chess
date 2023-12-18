@@ -3,13 +3,12 @@ using static ChessCore.Position;
 
 namespace ChessCoreTest;
 
-public class PawnMovesTests
+public class PawnMovesTests : MovesTests
 {
     [Test]
     public void Pawn_can_advance_one_rank()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/8/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/8/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -20,8 +19,7 @@ public class PawnMovesTests
     [Test]
     public void Pawn_can_advance_two_ranks_from_starting_rank()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/P7/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/P7/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -33,8 +31,7 @@ public class PawnMovesTests
     [Test]
     public void Pawn_blocked_by_own_piece_cannot_advance()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/P7/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/P7/P7/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -45,32 +42,28 @@ public class PawnMovesTests
     [Test]
     public void Pawn_blocked_by_opponent_piece_cannot_advance()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/p7/P7/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/p7/P7/8 w - - 0 1"), Colour.White);
         Assert.That(moves, Is.Empty);
     }
 
     [Test]
     public void White_pawn_cannot_advance_off_board()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("P7/8/8/8/8/8/8/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("P7/8/8/8/8/8/8/8 w - - 0 1"), Colour.White);
         Assert.That(moves, Is.Empty);
     }
 
     [Test]
     public void Black_pawn_cannot_advance_off_board()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/p7 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.Black);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/8/p7 w - - 0 1"), Colour.Black);
         Assert.That(moves, Is.Empty);
     }
 
     [Test]
     public void Pawn_can_capture_diagonally()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/ppp5/1P6 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/8/ppp5/1P6 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -82,8 +75,7 @@ public class PawnMovesTests
     [Test]
     public void Pawn_cannot_capture_own_colour()
     {
-        var moveCalculator = new MoveCalculator(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/PPP5/1P6/8 w - - 0 1"));
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(Board.CreateFromForsythEdwardsNotation("8/8/8/8/8/PPP5/1P6/8 w - - 0 1"), Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -98,9 +90,8 @@ public class PawnMovesTests
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/3p4/5p2/4P3/8/8/8/8 w - - 0 1");
         board.ApplyMove(new Move(d7, d5, MoveType.DoublePawnAdvance));
-        var moveCalculator = new MoveCalculator(board);
 
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(board, Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -115,9 +106,8 @@ public class PawnMovesTests
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/3p1p2/4P3/8/8/8/8 w - - 0 1");
         board.ApplyMove(new Move(d6, d5));
-        var moveCalculator = new MoveCalculator(board);
 
-        var moves = moveCalculator.GetMovesForColour(Colour.White);
+        var moves = MoveCalculator.GetMovesForColour(board, Colour.White);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
@@ -131,9 +121,8 @@ public class PawnMovesTests
     {
         var board = Board.CreateFromForsythEdwardsNotation("8/8/8/8/p1p5/8/1P6/8 b - - 0 1");
         board.ApplyMove(new Move(b2, b4, MoveType.DoublePawnAdvance));
-        var moveCalculator = new MoveCalculator(board);
 
-        var moves = moveCalculator.GetMovesForColour(Colour.Black);
+        var moves = MoveCalculator.GetMovesForColour(board, Colour.Black);
 
         CollectionAssert.AreEquivalent(new List<Move>
         {
