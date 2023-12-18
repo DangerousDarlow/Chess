@@ -3,7 +3,24 @@ using static ChessCore.Position;
 
 namespace ChessCore;
 
-public class Board
+public interface IBoard
+{
+    bool IsWhiteTurn { get; }
+    bool IsWhiteKingsideCastleAvailable { get; }
+    bool IsWhiteQueensideCastleAvailable { get; }
+    bool IsBlackKingsideCastleAvailable { get; }
+    bool IsBlackQueensideCastleAvailable { get; }
+    Position? EnPassantTarget { get; }
+    ushort FullMoveNumber { get; }
+    ushort HalfMoveClock { get; }
+    Piece? this[Position position] { get; }
+    void ApplyMove(Move move);
+    IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour);
+    string ToForsythEdwardsNotation();
+    string ToString();
+}
+
+public class Board : IBoard
 {
     private const int Size = 8;
 
@@ -153,10 +170,6 @@ public class Board
         }
     }
 
-    public static Board CreateWithNewGameSetup() => new();
-
-    public static Board CreateFromForsythEdwardsNotation(string fen) => new(fen);
-
     public string ToForsythEdwardsNotation()
     {
         var stringBuilder = new StringBuilder();
@@ -211,9 +224,14 @@ public class Board
         return stringBuilder.ToString();
     }
 
+    public override string ToString() => ToForsythEdwardsNotation();
+
+    public static Board CreateWithNewGameSetup() => new();
+
+    public static Board CreateFromForsythEdwardsNotation(string fen) => new(fen);
+
     /// <summary>
     ///     Initialise the board from a FEN string
-    ///
     ///     This function must not be made public with it's current implementation.
     ///     It assumes the board is uninitialized. It does not overwrite any existing state.
     /// </summary>
@@ -268,8 +286,6 @@ public class Board
         var fullMoveNumber = parts[5];
         FullMoveNumber = ushort.Parse(fullMoveNumber);
     }
-
-    public override string ToString() => ToForsythEdwardsNotation();
 
     public static bool IsRankOrFileInBounds(byte rankOrFile) => rankOrFile is >= 1 and <= Size;
 

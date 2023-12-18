@@ -4,13 +4,10 @@ namespace ChessCoreTest;
 
 public class BitVector8Tests
 {
-    [SetUp]
-    public void SetUp()
-    {
-        Target = new BitVector8();
-    }
-
     private BitVector8 Target { get; set; } = null!;
+
+    [SetUp]
+    public void SetUp() => Target = new BitVector8();
 
     [Test]
     public void Index_must_be_between_0_and_7_inclusive()

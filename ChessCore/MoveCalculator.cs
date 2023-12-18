@@ -1,6 +1,11 @@
 ﻿namespace ChessCore;
 
-public class MoveCalculator(Board board)
+public interface IMoveCalculator
+{
+    List<Move> GetMovesForColour(Colour colour);
+}
+
+public class MoveCalculator(IBoard board) : IMoveCalculator
 {
     private static readonly RankAndFileChange North = new(1, 0);
     private static readonly RankAndFileChange NorthEast = new(1, 1);
@@ -20,7 +25,7 @@ public class MoveCalculator(Board board)
     private static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
     private static readonly RankAndFileChange KnightWestNorth = new(1, -2);
 
-    private Board Board { get; } = board;
+    private IBoard Board { get; } = board;
 
     public List<Move> GetMovesForColour(Colour colour)
     {
@@ -44,15 +49,15 @@ public class MoveCalculator(Board board)
 
     private IEnumerable<Move> GetPawnMoves(Position positionFrom, Colour colour)
     {
-        var (rankFrom, fileFrom) = Board.RankAndFileFromPosition(positionFrom);
+        var (rankFrom, fileFrom) = ChessCore.Board.RankAndFileFromPosition(positionFrom);
 
         var rankTo = (byte) (colour == Colour.White ? rankFrom + 1 : rankFrom - 1);
-        if (Board.IsRankOrFileInBounds(rankTo) is false)
+        if (ChessCore.Board.IsRankOrFileInBounds(rankTo) is false)
             return Enumerable.Empty<Move>();
 
         var moves = new List<Move>();
 
-        var positionTo = Board.PositionFromRankAndFile(rankTo, fileFrom);
+        var positionTo = ChessCore.Board.PositionFromRankAndFile(rankTo, fileFrom);
         if (Board[positionTo] is null)
         {
             moves.Add(new Move(positionFrom, positionTo));
@@ -61,7 +66,7 @@ public class MoveCalculator(Board board)
             if ((colour == Colour.White && rankFrom == 2) || (colour == Colour.Black && rankFrom == 7))
             {
                 var rankToDoubleAdvance = (byte) (colour == Colour.White ? rankFrom + 2 : rankFrom - 2);
-                var positionToDoubleAdvance = Board.PositionFromRankAndFile(rankToDoubleAdvance, fileFrom);
+                var positionToDoubleAdvance = ChessCore.Board.PositionFromRankAndFile(rankToDoubleAdvance, fileFrom);
                 if (Board[positionToDoubleAdvance] is null)
                     moves.Add(new Move(positionFrom, positionToDoubleAdvance, MoveType.DoublePawnAdvance));
             }
@@ -78,9 +83,9 @@ public class MoveCalculator(Board board)
 
     private void AddPawnCaptureMove(Position positionFrom, Colour colour, byte fileTo, byte rankTo, List<Move> moves)
     {
-        if (!Board.IsRankOrFileInBounds(fileTo)) return;
+        if (!ChessCore.Board.IsRankOrFileInBounds(fileTo)) return;
 
-        var positionTo = Board.PositionFromRankAndFile(rankTo, fileTo);
+        var positionTo = ChessCore.Board.PositionFromRankAndFile(rankTo, fileTo);
         var pieceCaptured = Board[positionTo];
         if (pieceCaptured is not null && pieceCaptured.Colour != colour)
             moves.Add(new Move(positionFrom, positionTo, MoveType.Capture));
@@ -177,17 +182,17 @@ public class MoveCalculator(Board board)
     private IEnumerable<Move> AddMoveAfterPositionChange(Position positionFrom, RankAndFileChange change, Colour colour, bool iterate)
     {
         var moves = new List<Move>();
-        var (rank, file) = Board.RankAndFileFromPosition(positionFrom);
+        var (rank, file) = ChessCore.Board.RankAndFileFromPosition(positionFrom);
 
         do
         {
             rank = (byte) (rank + change.RankChange);
             file = (byte) (file + change.FileChange);
 
-            if (Board.IsRankOrFileInBounds(rank) is false || Board.IsRankOrFileInBounds(file) is false)
+            if (ChessCore.Board.IsRankOrFileInBounds(rank) is false || ChessCore.Board.IsRankOrFileInBounds(file) is false)
                 return moves;
 
-            var positionTo = Board.PositionFromRankAndFile(rank, file);
+            var positionTo = ChessCore.Board.PositionFromRankAndFile(rank, file);
             var piece = Board[positionTo];
 
             if (piece is null)
