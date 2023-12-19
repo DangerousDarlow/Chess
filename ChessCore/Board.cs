@@ -37,7 +37,7 @@ public class Board : IBoard
 
     private Board(string fen)
     {
-        InitialiseFromForsythEdwardsNotation(fen);
+        FromForsythEdwardsNotation(fen);
     }
 
     private Board()
@@ -230,13 +230,10 @@ public class Board : IBoard
 
     public static Board CreateFromForsythEdwardsNotation(string fen) => new(fen);
 
-    /// <summary>
-    ///     Initialise the board from a FEN string
-    ///     This function must not be made public with it's current implementation.
-    ///     It assumes the board is uninitialized. It does not overwrite any existing state.
-    /// </summary>
-    private void InitialiseFromForsythEdwardsNotation(string fen)
+    private void FromForsythEdwardsNotation(string fen)
     {
+        Array.Fill(_board, PieceTypeInternal.None);
+
         var parts = fen.Split(' ');
 
         var board = parts[0];
@@ -277,7 +274,9 @@ public class Board : IBoard
         IsBlackQueensideCastleAvailable = castlingAvailability.Contains('q');
 
         var enPassantTarget = parts[3];
-        if (enPassantTarget != "-")
+        if (enPassantTarget == "-")
+            EnPassantTarget = null;
+        else
             EnPassantTarget = Enum.Parse<Position>(enPassantTarget);
 
         var halfMoveClock = parts[4];
