@@ -5,7 +5,13 @@ namespace ChessCore;
 
 public interface IBoard
 {
+    Piece? this[Position position] { get; }
+    IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour);
+    void ApplyMove(Move move);
+
     bool IsWhiteTurn { get; }
+    bool IsKingsideCastleAvailable(Colour colour);
+    bool IsQueensideCastleAvailable(Colour colour);
     bool IsWhiteKingsideCastleAvailable { get; }
     bool IsWhiteQueensideCastleAvailable { get; }
     bool IsBlackKingsideCastleAvailable { get; }
@@ -13,9 +19,7 @@ public interface IBoard
     Position? EnPassantTarget { get; }
     ushort FullMoveNumber { get; }
     ushort HalfMoveClock { get; }
-    Piece? this[Position position] { get; }
-    void ApplyMove(Move move);
-    IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour);
+
     string ToForsythEdwardsNotation();
     string ToString();
 }
@@ -87,6 +91,20 @@ public class Board : IBoard
         get => _flags[0];
         private set => _flags[0] = value;
     }
+
+    public bool IsKingsideCastleAvailable(Colour colour) => colour switch
+    {
+        Colour.White => IsWhiteKingsideCastleAvailable,
+        Colour.Black => IsBlackKingsideCastleAvailable,
+        _ => throw new ArgumentException($"Invalid colour {colour}")
+    };
+
+    public bool IsQueensideCastleAvailable(Colour colour) => colour switch
+    {
+        Colour.White => IsWhiteQueensideCastleAvailable,
+        Colour.Black => IsBlackQueensideCastleAvailable,
+        _ => throw new ArgumentException($"Invalid colour {colour}")
+    };
 
     public bool IsWhiteKingsideCastleAvailable
     {

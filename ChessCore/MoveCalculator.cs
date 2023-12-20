@@ -150,7 +150,52 @@ public class MoveCalculator : IMoveCalculator
         moves.AddRange(AddMovesSouthWest(positionFrom, board, colour, false));
         moves.AddRange(AddMovesWest(positionFrom, board, colour, false));
         moves.AddRange(AddMovesNorthWest(positionFrom, board, colour, false));
+
+        AddCastleMoves(positionFrom, board, colour, moves);
+
         return moves;
+    }
+
+    private static void AddCastleMoves(Position positionFrom, IBoard board, Colour colour, List<Move> moves)
+    {
+        var kingStartPosition = colour == Colour.White ? Position.e1 : Position.e8;
+        if (positionFrom != kingStartPosition)
+            return;
+
+        AddKingsideCastleMove(positionFrom, board, colour, moves);
+        AddQueensideCastleMove(positionFrom, board, colour, moves);
+    }
+
+    private static void AddKingsideCastleMove(Position positionFrom, IBoard board, Colour colour, List<Move> moves)
+    {
+        if (board.IsKingsideCastleAvailable(colour) is false)
+            return;
+
+        if (board[Position.f1] is not null || board[Position.g1] is not null)
+            return;
+
+        var rookPosition = colour == Colour.White ? Position.h1 : Position.h8;
+        if (IsSameColourRook(board, colour, rookPosition))
+            moves.Add(new Move(positionFrom, Position.g1, MoveType.Castle));
+    }
+
+    private static void AddQueensideCastleMove(Position positionFrom, IBoard board, Colour colour, List<Move> moves)
+    {
+        if (board.IsQueensideCastleAvailable(colour) is false)
+            return;
+
+        if (board[Position.b1] is not null || board[Position.c1] is not null || board[Position.d1] is not null)
+            return;
+
+        var rookPosition = colour == Colour.White ? Position.a1 : Position.h1;
+        if (IsSameColourRook(board, colour, rookPosition))
+            moves.Add(new Move(positionFrom, Position.c1, MoveType.Castle));
+    }
+
+    private static bool IsSameColourRook(IBoard board, Colour colour, Position rookPosition)
+    {
+        var piece = board[rookPosition];
+        return piece is not null && piece.Type == PieceType.Rook && piece.Colour == colour;
     }
 
     private IEnumerable<Move> AddMovesNorth(Position positionFrom, IBoard board, Colour colour, bool iterate) =>
