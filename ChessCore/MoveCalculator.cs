@@ -171,12 +171,21 @@ public class MoveCalculator : IMoveCalculator
         if (board.IsKingsideCastleAvailable(colour) is false)
             return;
 
-        if (board[Position.f1] is not null || board[Position.g1] is not null)
-            return;
+        if (colour == Colour.White)
+        {
+            if (board[Position.f1] is not null || board[Position.g1] is not null)
+                return;
+        }
+        else
+        {
+            if (board[Position.f8] is not null || board[Position.g8] is not null)
+                return;
+        }
 
-        var rookPosition = colour == Colour.White ? Position.h1 : Position.h8;
-        if (IsSameColourRook(board, colour, rookPosition))
-            moves.Add(new Move(positionFrom, Position.g1, MoveType.Castle));
+        var rookFromPosition = colour == Colour.White ? Position.h1 : Position.h8;
+        var kingToPosition = colour == Colour.White ? Position.g1 : Position.g8;
+        if (IsSameColourRook(board, colour, rookFromPosition))
+            moves.Add(new Move(positionFrom, kingToPosition, MoveType.Castle));
     }
 
     private static void AddQueensideCastleMove(Position positionFrom, IBoard board, Colour colour, List<Move> moves)
@@ -184,12 +193,21 @@ public class MoveCalculator : IMoveCalculator
         if (board.IsQueensideCastleAvailable(colour) is false)
             return;
 
-        if (board[Position.b1] is not null || board[Position.c1] is not null || board[Position.d1] is not null)
-            return;
+        if (colour == Colour.White)
+        {
+            if (board[Position.b1] is not null || board[Position.c1] is not null || board[Position.d1] is not null)
+                return;
+        }
+        else
+        {
+            if (board[Position.b8] is not null || board[Position.c8] is not null || board[Position.d8] is not null)
+                return;
+        }
 
-        var rookPosition = colour == Colour.White ? Position.a1 : Position.h1;
-        if (IsSameColourRook(board, colour, rookPosition))
-            moves.Add(new Move(positionFrom, Position.c1, MoveType.Castle));
+        var rookFromPosition = colour == Colour.White ? Position.a1 : Position.a8;
+        var kingToPosition = colour == Colour.White ? Position.c1 : Position.c8;
+        if (IsSameColourRook(board, colour, rookFromPosition))
+            moves.Add(new Move(positionFrom, kingToPosition, MoveType.Castle));
     }
 
     private static bool IsSameColourRook(IBoard board, Colour colour, Position rookPosition)

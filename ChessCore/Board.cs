@@ -150,10 +150,9 @@ public class Board : IBoard
     {
         var piece = this[move.From];
         if (piece == null)
-            throw new Exception($"Invalid {move}; No piece");
+            throw new Exception($"Invalid move {move}; No piece");
 
-        this[move.To] = piece;
-        this[move.From] = null;
+        Move(move.From, move.To);
 
         IsWhiteTurn = !IsWhiteTurn;
 
@@ -169,6 +168,38 @@ public class Board : IBoard
             EnPassantTarget = null;
         }
 
+        if (move.Type == MoveType.Castle)
+        {
+            switch (move.To)
+            {
+                case g1:
+                    CastleRook(h1, f1, piece.Colour);
+                    break;
+                case g8:
+                    CastleRook(h8, f8, piece.Colour);
+                    break;
+                case c1:
+                    CastleRook(a1, d1, piece.Colour);
+                    break;
+                case c8:
+                    CastleRook(a8, d8, piece.Colour);
+                    break;
+                default:
+                    throw new Exception($"Invalid castle move; king move to position {move.To} invalid");
+            }
+
+            if (piece.Colour == Colour.White)
+            {
+                IsWhiteKingsideCastleAvailable = false;
+                IsWhiteQueensideCastleAvailable = false;
+            }
+            else
+            {
+                IsBlackKingsideCastleAvailable = false;
+                IsBlackQueensideCastleAvailable = false;
+            }
+        }
+
         if (move.Type == MoveType.Capture || piece.Type == PieceType.Pawn)
             HalfMoveClock = 0;
         else
@@ -176,6 +207,27 @@ public class Board : IBoard
 
         if (IsWhiteTurn)
             ++FullMoveNumber;
+    }
+
+    private void Move(Position from, Position to)
+    {
+        this[to] = this[from];
+        this[from] = null;
+    }
+
+    private void CastleRook(Position from, Position to, Colour colour)
+    {
+        var rook = this[from];
+        if (rook == null)
+            throw new Exception($"Invalid castle move; No piece at position {from}");
+
+        if (rook.Type != PieceType.Rook)
+            throw new Exception($"Invalid castle move; Piece at position {from} is {rook.Type} not a rook");
+
+        if (rook.Colour != colour)
+            throw new Exception($"Invalid castle move; Rook at position {from} is not own colour");
+
+        Move(from, to);
     }
 
     public IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour)
