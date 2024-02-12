@@ -274,5 +274,3 @@ public class MoveCalculator : IMoveCalculator
         return moves;
     }
 }
-
-public record RankAndFileChange(sbyte RankChange, sbyte FileChange);

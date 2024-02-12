@@ -360,16 +360,20 @@ public class Board : IBoard
 
     private static byte IndexFromRankAndFile(byte rank, byte file)
     {
-        if (IsRankOrFileInBounds(rank) == false)
-            throw new ArgumentOutOfRangeException(nameof(rank));
+        var position = PositionFromRankAndFile(rank, file);
+        if (position == None)
+            throw new Exception($"Invalid rank {rank} or file {file}");
 
-        if (IsRankOrFileInBounds(file) == false)
-            throw new ArgumentOutOfRangeException(nameof(file));
-
-        return (byte) ((rank - 1) * Size + (file - 1));
+        return (byte) position;
     }
 
-    public static Position PositionFromRankAndFile(byte rank, byte file) => (Position) IndexFromRankAndFile(rank, file);
+    public static Position PositionFromRankAndFile(byte rank, byte file)
+    {
+        if (IsRankOrFileInBounds(rank) == false || IsRankOrFileInBounds(file) == false)
+            return None;
+
+        return (Position) ((rank - 1) * Size + (file - 1));
+    }
 
     private static (byte rank, byte file) RankAndFileFromIndex(byte index)
     {

@@ -184,7 +184,7 @@ public class BoardTests
     [TestCase(0, 0)]
     [TestCase(9, 9)]
     public void IndexFromRankAndFile_throws_if_out_of_range(byte rank, byte file) =>
-        Assert.That(() => Board.PositionFromRankAndFile(rank, file), Throws.TypeOf(typeof(ArgumentOutOfRangeException)));
+        Assert.That(Board.PositionFromRankAndFile(rank, file), Is.EqualTo(None));
 
     [Test]
     public void RankAndFileFromIndex_throws_if_out_of_range() =>

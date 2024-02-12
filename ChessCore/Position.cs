@@ -68,5 +68,5 @@ public enum Position : byte
     f8 = 61,
     g8 = 62,
     h8 = 63,
-    None
+    None = 255
 }
