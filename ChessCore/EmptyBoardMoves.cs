@@ -30,28 +30,19 @@ public class EmptyBoardMoves : IEmptyBoardMoves
         return moves;
     }
 
-    private static IEnumerable<Position> GetKingMoves(Position position)
+    private static List<Position> GetKingMoves(Position position)
     {
         var moves = new List<Position>();
-        moves.AddIfNotNone(position.Transform(North));
-        moves.AddIfNotNone(position.Transform(NorthEast));
-        moves.AddIfNotNone(position.Transform(East));
-        moves.AddIfNotNone(position.Transform(SouthEast));
-        moves.AddIfNotNone(position.Transform(South));
-        moves.AddIfNotNone(position.Transform(SouthWest));
-        moves.AddIfNotNone(position.Transform(West));
-        moves.AddIfNotNone(position.Transform(NorthWest));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.North));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.NorthEast));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.East));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.SouthEast));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.South));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.SouthWest));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.West));
+        moves.AddIfNotNone(position.Transform(RankAndFileChanges.NorthWest));
         return moves;
     }
-
-    private static readonly RankAndFileChange North = new(1, 0);
-    private static readonly RankAndFileChange NorthEast = new(1, 1);
-    private static readonly RankAndFileChange East = new(0, 1);
-    private static readonly RankAndFileChange SouthEast = new(-1, 1);
-    private static readonly RankAndFileChange South = new(-1, 0);
-    private static readonly RankAndFileChange SouthWest = new(-1, -1);
-    private static readonly RankAndFileChange West = new(0, -1);
-    private static readonly RankAndFileChange NorthWest = new(1, -1);
 }
 
 public static class MovesListExtensions

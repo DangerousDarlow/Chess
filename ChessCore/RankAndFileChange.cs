@@ -2,6 +2,18 @@
 
 public record RankAndFileChange(sbyte RankChange, sbyte FileChange);
 
+public static class RankAndFileChanges
+{
+    public static readonly RankAndFileChange North = new(1, 0);
+    public static readonly RankAndFileChange NorthEast = new(1, 1);
+    public static readonly RankAndFileChange East = new(0, 1);
+    public static readonly RankAndFileChange SouthEast = new(-1, 1);
+    public static readonly RankAndFileChange South = new(-1, 0);
+    public static readonly RankAndFileChange SouthWest = new(-1, -1);
+    public static readonly RankAndFileChange West = new(0, -1);
+    public static readonly RankAndFileChange NorthWest = new(1, -1);
+}
+
 public static class RankAndFileChangeExtensions
 {
     public static Position Transform(this Position position, RankAndFileChange change)
