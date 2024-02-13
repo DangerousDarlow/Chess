@@ -364,26 +364,3 @@ public class Board
 
     public static (byte rank, byte file) RankAndFileFromPosition(Position position) => RankAndFileFromIndex((byte) position);
 }
-
-public static class BoardExtensions
-{
-    public static Piece? ToPiece(this PieceTypeInternal piece) => piece switch
-    {
-        PieceTypeInternal.None => null,
-        PieceTypeInternal.BlackPawn => Piece.BlackPawn,
-        PieceTypeInternal.BlackBishop => Piece.BlackBishop,
-        PieceTypeInternal.BlackKnight => Piece.BlackKnight,
-        PieceTypeInternal.BlackRook => Piece.BlackRook,
-        PieceTypeInternal.BlackQueen => Piece.BlackQueen,
-        PieceTypeInternal.BlackKing => Piece.BlackKing,
-        PieceTypeInternal.WhitePawn => Piece.WhitePawn,
-        PieceTypeInternal.WhiteBishop => Piece.WhiteBishop,
-        PieceTypeInternal.WhiteKnight => Piece.WhiteKnight,
-        PieceTypeInternal.WhiteRook => Piece.WhiteRook,
-        PieceTypeInternal.WhiteQueen => Piece.WhiteQueen,
-        PieceTypeInternal.WhiteKing => Piece.WhiteKing,
-        _ => throw new ArgumentException($"Invalid piece byte {piece}")
-    };
-
-    public static PieceTypeInternal ToPieceTypeInternal(this Piece? piece) => piece?.ByteValue ?? PieceTypeInternal.None;
-}
