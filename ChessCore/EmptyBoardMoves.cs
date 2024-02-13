@@ -4,12 +4,7 @@ using static ChessCore.Position;
 
 namespace ChessCore;
 
-public interface IEmptyBoardMoves
-{
-    IEnumerable<Position> GetMoves(PieceType pieceType, Position position);
-}
-
-public class EmptyBoardMoves : IEmptyBoardMoves
+public class EmptyBoardMoves
 {
     private readonly MemoryCache _cache = new("EmptyBoardMoves");
     private readonly CacheItemPolicy _cacheItemPolicy = new();
