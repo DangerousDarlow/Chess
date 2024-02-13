@@ -12,11 +12,20 @@ public static class RankAndFileChanges
     public static readonly RankAndFileChange SouthWest = new(-1, -1);
     public static readonly RankAndFileChange West = new(0, -1);
     public static readonly RankAndFileChange NorthWest = new(1, -1);
+
+    public static readonly RankAndFileChange KnightNorthEast = new(2, -1);
+    public static readonly RankAndFileChange KnightNorthWest = new(2, 1);
+    public static readonly RankAndFileChange KnightEastNorth = new(1, 2);
+    public static readonly RankAndFileChange KnightEastSouth = new(-1, 2);
+    public static readonly RankAndFileChange KnightSouthEast = new(-2, 1);
+    public static readonly RankAndFileChange KnightSouthWest = new(-2, -1);
+    public static readonly RankAndFileChange KnightWestSouth = new(-1, -2);
+    public static readonly RankAndFileChange KnightWestNorth = new(1, -2);
 }
 
 public static class RankAndFileChangeExtensions
 {
-    public static Position Transform(this Position position, RankAndFileChange change)
+    public static Position Change(this Position position, RankAndFileChange change)
     {
         var (rank, file) = Board.RankAndFileFromPosition(position);
         var newRank = (byte) (rank + change.RankChange);
