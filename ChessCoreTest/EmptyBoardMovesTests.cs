@@ -40,7 +40,7 @@ public class EmptyBoardMovesTests
             d5, d6, d7, d8, None,
             e4, f4, g4, h4, None,
             d3, d2, d1, None,
-            c4, b4, a4, None,
+            c4, b4, a4, None
         },
         EmptyBoardMoves.GetMoves(PieceType.Rook, d4));
 
@@ -65,7 +65,7 @@ public class EmptyBoardMovesTests
         {
             a2, a3, a4, a5, a6, a7, a8, None,
             b2, c3, d4, e5, f6, g7, h8, None,
-            b1, c1, d1, e1, f1, g1, h1, None,
+            b1, c1, d1, e1, f1, g1, h1, None
         },
         EmptyBoardMoves.GetMoves(PieceType.Queen, a1));
 

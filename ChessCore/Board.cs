@@ -71,20 +71,6 @@ public class Board
         private set => _flags[0] = value;
     }
 
-    public bool IsKingsideCastleAvailable(Colour colour) => colour switch
-    {
-        Colour.White => IsWhiteKingsideCastleAvailable,
-        Colour.Black => IsBlackKingsideCastleAvailable,
-        _ => throw new ArgumentException($"Invalid colour {colour}")
-    };
-
-    public bool IsQueensideCastleAvailable(Colour colour) => colour switch
-    {
-        Colour.White => IsWhiteQueensideCastleAvailable,
-        Colour.Black => IsBlackQueensideCastleAvailable,
-        _ => throw new ArgumentException($"Invalid colour {colour}")
-    };
-
     public bool IsWhiteKingsideCastleAvailable
     {
         get => _flags[1];
@@ -124,6 +110,20 @@ public class Board
                 _board[(byte) position] = value.ToPieceTypeInternal();
         }
     }
+
+    public bool IsKingsideCastleAvailable(Colour colour) => colour switch
+    {
+        Colour.White => IsWhiteKingsideCastleAvailable,
+        Colour.Black => IsBlackKingsideCastleAvailable,
+        _ => throw new ArgumentException($"Invalid colour {colour}")
+    };
+
+    public bool IsQueensideCastleAvailable(Colour colour) => colour switch
+    {
+        Colour.White => IsWhiteQueensideCastleAvailable,
+        Colour.Black => IsBlackQueensideCastleAvailable,
+        _ => throw new ArgumentException($"Invalid colour {colour}")
+    };
 
     public void ApplyMove(Move move)
     {
