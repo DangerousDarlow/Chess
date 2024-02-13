@@ -3,28 +3,7 @@ using static ChessCore.Position;
 
 namespace ChessCore;
 
-public interface IBoard
-{
-    Piece? this[Position position] { get; }
-    IEnumerable<(Position position, Piece piece)> PiecesOfColour(Colour colour);
-    void ApplyMove(Move move);
-
-    bool IsWhiteTurn { get; }
-    bool IsKingsideCastleAvailable(Colour colour);
-    bool IsQueensideCastleAvailable(Colour colour);
-    bool IsWhiteKingsideCastleAvailable { get; }
-    bool IsWhiteQueensideCastleAvailable { get; }
-    bool IsBlackKingsideCastleAvailable { get; }
-    bool IsBlackQueensideCastleAvailable { get; }
-    Position? EnPassantTarget { get; }
-    ushort FullMoveNumber { get; }
-    ushort HalfMoveClock { get; }
-
-    string ToForsythEdwardsNotation();
-    string ToString();
-}
-
-public class Board : IBoard
+public class Board
 {
     private const int Size = 8;
 
